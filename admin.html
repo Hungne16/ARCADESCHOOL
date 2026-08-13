@@ -96,27 +96,26 @@
             const gameId = document.getElementById('game-select').value;
             const teamsCount = document.getElementById('teams-select').value;
             socket.emit('create_room', { gameId, teamsCount });
+            socket.on('room_created', (data) => {
+                myPin = typeof data === 'string' ? data : data.pin;
+                document.getElementById('create-view').classList.add('hidden');
+                document.getElementById('control-view').classList.remove('hidden');
+                document.getElementById('pin-display').innerText = myPin;
+
+                let btnsHTML = '';
+                for(let i=1; i<=data.teamsCount; i++) {
+                    btnsHTML += `<button id="btn-team-${i}" onclick="selectTeam(${i})">Đội ${i}</button>`;
+                }
+
+                if (data.gameId == 1) {
+                    document.getElementById('g1-controls').classList.remove('hidden');
+                    document.getElementById('g1-team-btns').innerHTML = btnsHTML;
+                } else {
+                    document.getElementById('g2-controls').classList.remove('hidden');
+                    document.getElementById('g2-team-btns').innerHTML = btnsHTML;
+                }
+            });
         }
-
-        socket.on('room_created', (data) => {
-            myPin = data.pin;
-            document.getElementById('create-view').classList.add('hidden');
-            document.getElementById('control-view').classList.remove('hidden');
-            document.getElementById('pin-display').innerText = myPin;
-
-            let btnsHTML = '';
-            for(let i=1; i<=data.teamsCount; i++) {
-                btnsHTML += `<button id="btn-team-${i}" onclick="selectTeam(${i})">Đội ${i}</button>`;
-            }
-
-            if (data.gameId == 1) {
-                document.getElementById('g1-controls').classList.remove('hidden');
-                document.getElementById('g1-team-btns').innerHTML = btnsHTML;
-            } else {
-                document.getElementById('g2-controls').classList.remove('hidden');
-                document.getElementById('g2-team-btns').innerHTML = btnsHTML;
-            }
-        });
 
         socket.on('player_joined', (id) => {
             const st = document.getElementById('player-status');
