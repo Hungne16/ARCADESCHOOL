@@ -144,6 +144,8 @@ function loadQuestion() {
         if(card) {
             card.style.borderColor = '#fff';
             card.style.transform = 'scale(1)'; // reset scale
+            const badge = document.getElementById(`badge-${t.id}`);
+            if(badge) badge.remove();
         }
     });
 }
@@ -151,10 +153,21 @@ function loadQuestion() {
 function selectTeam(id) {
     teams.forEach(t => {
         const card = document.getElementById(`card-team-${t.id}`);
-        if (card && t.hp > 0) card.style.borderColor = '#fff';
+        if (card && t.hp > 0) {
+            card.style.borderColor = '#fff';
+            const badge = document.getElementById(`badge-${t.id}`);
+            if(badge && badge.innerText === 'ĐANG CHỌN...') badge.remove();
+        }
     });
     const activeCard = document.getElementById(`card-team-${id}`);
-    if(activeCard) activeCard.style.borderColor = '#00ffcc';
+    if(activeCard) {
+        activeCard.style.borderColor = '#ffca28'; // Màu vàng nổi bật
+        // Thêm badge ĐANG CHỌN
+        const existingBadge = document.getElementById(`badge-${id}`);
+        if(!existingBadge) {
+            activeCard.innerHTML += `<div id="badge-${id}" style="background: #ffca28; color:#000; padding: 5px 15px; border-radius: 5px; font-weight:bold; font-size: 2rem; margin-top: 10px; text-transform: uppercase; animation: blink 1s infinite;">ĐANG CHỌN...</div>`;
+        }
+    }
 }
 
 function setAnswer(teamId, letter) {
@@ -163,8 +176,16 @@ function setAnswer(teamId, letter) {
     
     const card = document.getElementById(`card-team-${teamId}`);
     if (card) {
-        card.style.borderColor = '#fff';
+        card.style.borderColor = '#00ffcc';
         card.style.transform = 'scale(0.95)'; // Indicate locked
+        const badge = document.getElementById(`badge-${teamId}`);
+        if(badge) {
+            badge.innerText = 'ĐÃ CHỐT';
+            badge.style.background = '#00ffcc';
+            badge.style.animation = 'none';
+        } else {
+            card.innerHTML += `<div id="badge-${teamId}" style="background: #00ffcc; color:#000; padding: 5px 15px; border-radius: 5px; font-weight:bold; font-size: 2rem; margin-top: 10px; text-transform: uppercase;">ĐÃ CHỐT</div>`;
+        }
     }
 }
 
