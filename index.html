@@ -33,18 +33,17 @@
         </div>
         <header>
             <h1 class="glitch" data-text="ARCADE HỌC ĐƯỜNG">ARCADE HỌC ĐƯỜNG</h1>
-            <p class="subtitle">SELECT YOUR GAME</p>
         </header>
 
-        <main class="join-room" style="text-align: center; margin-top: 30px;">
-            <h2 style="color: #ffca28; font-size: 3rem; margin-bottom: 20px;">NHẬP MÃ PHÒNG ĐỂ KẾT NỐI</h2>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <main class="join-room" style="text-align: center; margin-top: 20px;">
+            <h2 style="color: #ffca28; font-size: 3rem; margin-bottom: 15px;">NHẬP MÃ PHÒNG ĐỂ KẾT NỐI</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
                 <input type="text" id="pin-input" placeholder="MÃ 4 SỐ" maxlength="4" autocomplete="off" 
-                       style="font-size: 5rem; text-align: center; font-family: 'VT323', monospace; border: 6px solid #fff; background: #000; color: #00ffcc; padding: 15px; width: 300px; text-transform: uppercase;">
-                <button class="pixel-btn" onclick="joinRoom()" style="width: 300px; background-color: #00e676;">
-                    <span class="btn-text">KẾT NỐI MÁY CHIẾU</span>
+                       style="font-size: 5rem; text-align: center; font-family: 'VT323', monospace; border: 4px solid #fff; background: #000; color: #00ffcc; padding: 10px; width: 250px; text-transform: uppercase;">
+                <button onclick="joinRoom()" style="width: 250px; background-color: #00e676; color: #000; font-family: 'VT323', monospace; font-size: 3rem; font-weight: bold; padding: 10px; border: 4px solid #000; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #000;">
+                    KẾT NỐI
                 </button>
-                <p id="join-error" style="color: #ff5252; font-size: 2.5rem; display: none;">Mã phòng không tồn tại!</p>
+                <p id="join-error" style="color: #ff5252; font-size: 2rem; display: none; margin: 0;">Mã phòng không tồn tại!</p>
             </div>
         </main>
 
