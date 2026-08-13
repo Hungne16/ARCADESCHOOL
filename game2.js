@@ -4,7 +4,9 @@ const teamsCount = parseInt(urlParams.get('teams') || 4);
 
 const socket = typeof io !== 'undefined' ? io() : null;
 if(socket && roomPin) {
-    socket.emit('join_room', roomPin);
+    socket.on('connect', () => {
+        socket.emit('join_room', roomPin);
+    });
 }
 
 const questions = [

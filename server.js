@@ -58,18 +58,11 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
-        // Tùy chọn: Xóa phòng nếu Admin thoát
-        for (const pin in rooms) {
-            if (rooms[pin].adminId === socket.id) {
-                delete rooms[pin];
-                console.log(`Đã xóa phòng [${pin}] vì Admin thoát.`);
-                break;
-            }
-        }
+        // Không xóa phòng ngay lập tức vì mạng điện thoại chập chờn sẽ làm sập phòng
     });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server đang chạy tại cổng ${PORT}`);
 });
