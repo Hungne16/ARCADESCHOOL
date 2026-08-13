@@ -1,13 +1,3 @@
-const urlParams = new URLSearchParams(window.location.search);
-const roomPin = urlParams.get('room');
-const teamsCount = parseInt(urlParams.get('teams') || 4);
-
-const socket = typeof io !== 'undefined' ? io() : null;
-if(socket && roomPin) {
-    socket.on('connect', () => {
-        socket.emit('join_room', roomPin);
-    });
-}
 
 const questions = [
     {
@@ -296,9 +286,35 @@ function showVictory() {
 }
 
 // SOCKET LISTENERS
-if (socket) {
+const urlParams = new URLSearchParams(window.location.search);
+const roomPin = urlParams.get('room');
+const teamsCount = parseInt(urlParams.get('teams') || 4);
+
+if (!roomPin) {
+    alert("CẢNH BÁO: Không tìm thấy Mã Phòng (PIN)! Vui lòng quay lại Trang Chủ để nhập mã phòng.");
+}
+
+const socket = typeof io !== 'undefined' ? io() : null;
+if(socket) {
+    socket.on('connect', () => {
+        console.log("Socket connected! ID:", socket.id);
+        if(roomPin) {
+            socket.emit('join_room', roomPin);
+            // Hiển thị thông báo nhỏ báo đã kết nối trên màn hình
+            let debugMsg = document.getElementById('debug-socket');
+            if(!debugMsg) {
+                debugMsg = document.createElement('div');
+                debugMsg.id = 'debug-socket';
+                debugMsg.style.cssText = 'position:fixed; top:10px; left:10px; background:green; color:white; padding:5px 10px; font-size:1.5rem; z-index:9999; border-radius:5px;';
+                document.body.appendChild(debugMsg);
+            }
+            debugMsg.innerText = `Đã kết nối phòng: ${roomPin}`;
+        }
+    });
+    
     socket.on('game_action', (data) => {
         const { action, payload } = data;
+        console.log("Received action:", action, payload);
         if (action === 'select_team') {
             selectTeam(payload);
         } else if (action === 'set_answer') {
