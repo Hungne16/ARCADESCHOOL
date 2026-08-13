@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khu Vực Giáo Viên - Tạo Phòng</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #111; color: #fff; font-family: 'VT323', monospace; text-align: center; padding: 20px; }
+        .admin-box { background: #222; border: 4px solid #fff; padding: 20px; margin: 20px auto; max-width: 500px; border-radius: 10px; }
+        select, input { font-family: 'VT323', monospace; font-size: 2.5rem; padding: 10px; margin: 10px 0; width: 100%; border: 3px solid #ccc; background: #000; color: #00ffcc;}
+        button { font-family: 'VT323', monospace; font-size: 2.5rem; padding: 15px; margin: 10px 0; width: 100%; background: #00e676; cursor: pointer; border: 4px solid #000; font-weight: bold; border-radius: 8px;}
+        button:active { transform: scale(0.95); }
+        .hidden { display: none !important; }
+        .controls { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-bottom: 20px; }
+        .controls button { margin: 0; }
+        h1 { font-size: 4rem; color: #ffca28; }
+        h2 { font-size: 3rem; margin-bottom: 20px;}
+        .selected-team { border-color: #00ffcc; box-shadow: 0 0 15px #00ffcc; }
+    </style>
+</head>
+<body>
+    <h1>TRUNG TÂM ĐIỀU KHIỂN</h1>
+    <div id="create-view" class="admin-box">
+        <h2>TẠO PHÒNG MỚI</h2>
+        <select id="game-select">
+            <option value="1">Game 1: Mật Mã Học Đường</option>
+            <option value="2">Game 2: Đấu Trường Sinh Tồn</option>
+        </select>
+        <select id="teams-select">
+            <option value="2">2 Đội (Chia nửa lớp)</option>
+            <option value="3">3 Đội</option>
+            <option value="4" selected>4 Đội (Khuyên dùng)</option>
+            <option value="5">5 Đội</option>
+            <option value="6">6 Đội</option>
+        </select>
+        <button onclick="createRoom()">TẠO PHÒNG</button>
+        <br><br>
+        <a href="index.html" style="color: #888; font-size: 2rem;">← Quay lại trang chủ</a>
+    </div>
+
+    <div id="control-view" class="admin-box hidden">
+        <h2>MÃ PHÒNG: <span id="pin-display" style="color:#ffca28; font-size: 5rem; display: block;"></span></h2>
+        <p style="font-size: 2rem; color: #ccc;">Yêu cầu học sinh nhập mã này trên máy chiếu để kết nối.</p>
+        <p id="player-status" style="color: #ff5252; font-size: 2.5rem; margin: 15px 0;">[ Đang đợi máy chiếu kết nối... ]</p>
+        
+        <hr style="margin: 20px 0; border: 1px dashed #555;">
+        
+        <!-- Controls for Game 1 -->
+        <div id="g1-controls" class="hidden">
+            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 1</h3>
+            <p style="font-size: 2rem;">1. Bấm chọn Đội giơ tay:</p>
+            <div class="controls" id="g1-team-btns"></div>
+            <p style="font-size: 2rem;">2. Nhập đáp án giáo viên nghe được:</p>
+            <input type="text" id="g1-answer" placeholder="Ví dụ: 42">
+            <button onclick="sendG1Answer()" style="background: #ff9800;">GỬI ĐÁP ÁN</button>
+            <button onclick="sendG1Next()" style="background: #ccc; margin-top: 10px;">QUA TRẠM KẾ TIẾP</button>
+        </div>
+
+        <!-- Controls for Game 2 -->
+        <div id="g2-controls" class="hidden">
+            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 2</h3>
+            <p style="font-size: 2rem;">1. Bấm chọn Đội:</p>
+            <div class="controls" id="g2-team-btns"></div>
+            <p style="font-size: 2rem;">2. Chốt đáp án cho đội đó:</p>
+            <div class="controls">
+                <button onclick="sendG2Ans('A')" style="background: #e21b3c; color: #fff;">A</button>
+                <button onclick="sendG2Ans('B')" style="background: #1368ce; color: #fff;">B</button>
+                <button onclick="sendG2Ans('C')" style="background: #d89e00; color: #fff;">C</button>
+                <button onclick="sendG2Ans('D')" style="background: #26890c; color: #fff;">D</button>
+            </div>
+            <hr style="border: 1px dashed #555; margin: 20px 0;">
+            <button onclick="sendG2Reveal()" style="background: #ffca28;">CÔNG BỐ KẾT QUẢ 🚀</button>
+            <button onclick="sendG2Next()" style="background: #00ffcc; margin-top: 10px;">CÂU TIẾP THEO</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let myPin = null;
+
+        function createRoom() {
+            const gameId = document.getElementById('game-select').value;
+            const teamsCount = document.getElementById('teams-select').value;
+            socket.emit('create_room', { gameId, teamsCount });
+        }
+
+        socket.on('room_created', (data) => {
+            myPin = data.pin;
+            document.getElementById('create-view').classList.add('hidden');
+            document.getElementById('control-view').classList.remove('hidden');
+            document.getElementById('pin-display').innerText = myPin;
+
+            let btnsHTML = '';
+            for(let i=1; i<=data.teamsCount; i++) {
+                btnsHTML += `<button id="btn-team-${i}" onclick="selectTeam(${i})">Đội ${i}</button>`;
+            }
+
+            if (data.gameId == 1) {
+                document.getElementById('g1-controls').classList.remove('hidden');
+                document.getElementById('g1-team-btns').innerHTML = btnsHTML;
+            } else {
+                document.getElementById('g2-controls').classList.remove('hidden');
+                document.getElementById('g2-team-btns').innerHTML = btnsHTML;
+            }
+        });
+
+        socket.on('player_joined', (id) => {
+            const st = document.getElementById('player-status');
+            st.innerText = "✅ Máy chiếu đã kết nối! Bắt đầu chơi.";
+            st.style.color = "#00e676";
+        });
+
+        let activeTeam = null;
+        function selectTeam(id) {
+            activeTeam = id;
+            document.querySelectorAll('[id^="btn-team-"]').forEach(b => b.classList.remove('selected-team'));
+            const btn = document.getElementById(`btn-team-${id}`);
+            if(btn) btn.classList.add('selected-team');
+
+            socket.emit('admin_action', { pin: myPin, action: 'select_team', payload: id });
+        }
+
+        function sendG1Answer() {
+            if(!activeTeam) return alert('Hãy chọn đội trước!');
+            const ans = document.getElementById('g1-answer').value;
+            socket.emit('admin_action', { pin: myPin, action: 'check_answer', payload: ans });
+            document.getElementById('g1-answer').value = '';
+        }
+        
+        function sendG1Next() {
+            socket.emit('admin_action', { pin: myPin, action: 'next_stage', payload: null });
+        }
+
+        function sendG2Ans(ans) {
+            if(!activeTeam) return alert('Hãy chọn đội trước!');
+            socket.emit('admin_action', { pin: myPin, action: 'set_answer', payload: { team: activeTeam, answer: ans } });
+            
+            // Xóa style team sau khi chọn
+            document.querySelectorAll('[id^="btn-team-"]').forEach(b => b.classList.remove('selected-team'));
+            activeTeam = null;
+        }
+
+        function sendG2Reveal() {
+            socket.emit('admin_action', { pin: myPin, action: 'reveal', payload: null });
+        }
+
+        function sendG2Next() {
+            socket.emit('admin_action', { pin: myPin, action: 'next_question', payload: null });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Học Đường</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Màn hình Loading -->
+    <div id="loading-screen" class="hidden">
+        <div class="loading-content">
+            <div class="loading-header">
+                <h1 class="blink">LOADING...</h1>
+                <!-- Ảnh gif pixel học sinh đang chạy -->
+                <img src="./running_student.jpg" class="pixel-runner" alt="Học sinh chạy">
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p id="loading-text">Đang tải dữ liệu...</p>
+        </div>
+    </div>
+
+    <!-- Lớp phủ tạo hiệu ứng màn hình tivi lồi CRT cũ -->
+    <div class="crt-overlay"></div>
+    
+    <div class="screen">
+        <div class="school-info">
+            <h2>TH&THCS SUỐI BU</h2>
+            <h3>Giáo Viên Hoàng Thị Hồng</h3>
+        </div>
+        <header>
+            <h1 class="glitch" data-text="ARCADE HỌC ĐƯỜNG">ARCADE HỌC ĐƯỜNG</h1>
+            <p class="subtitle">SELECT YOUR GAME</p>
+        </header>
+
+        <main class="join-room" style="text-align: center; margin-top: 30px;">
+            <h2 style="color: #ffca28; font-size: 3rem; margin-bottom: 20px;">NHẬP MÃ PHÒNG ĐỂ KẾT NỐI</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <input type="text" id="pin-input" placeholder="MÃ 4 SỐ" maxlength="4" autocomplete="off" 
+                       style="font-size: 5rem; text-align: center; font-family: 'VT323', monospace; border: 6px solid #fff; background: #000; color: #00ffcc; padding: 15px; width: 300px; text-transform: uppercase;">
+                <button class="pixel-btn" onclick="joinRoom()" style="width: 300px; background-color: #00e676;">
+                    <span class="btn-text">KẾT NỐI MÁY CHIẾU</span>
+                </button>
+                <p id="join-error" style="color: #ff5252; font-size: 2.5rem; display: none;">Mã phòng không tồn tại!</p>
+            </div>
+        </main>
+
+        <footer style="margin-top: 50px; text-align: center;">
+            <p class="blink" style="margin-bottom: 15px;">AWAITING SIGNAL...</p>
+            <a href="admin.html" style="color: #888; text-decoration: underline; font-size: 2rem;">[ Quản trị viên (Giáo viên) Tạo Phòng ]</a>
+        </footer>
+    </div>
+    
+    <!-- Load Socket.io Client -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function joinRoom() {
+            const pin = document.getElementById('pin-input').value.trim();
+            if(pin.length !== 4) return;
+            
+            // Hiện loading... (Dùng lại màn hình loading có sẵn trong html)
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-screen').style.display = 'flex';
+            setTimeout(() => { document.getElementById('loading-screen').style.opacity = '1'; }, 10);
+            
+            socket.emit('join_room', pin);
+        }
+
+        socket.on('room_joined', (room) => {
+            document.getElementById('loading-text').innerText = "KẾT NỐI THÀNH CÔNG!";
+            setTimeout(() => {
+                // Chuyển trang sang Game tương ứng và truyền PIN vào URL
+                if (room.gameId == 1) {
+                    window.location.href = `game1.html?room=${room.pin}&teams=${room.teamsCount}`;
+                } else {
+                    window.location.href = `game2.html?room=${room.pin}&teams=${room.teamsCount}`;
+                }
+            }, 1000);
+        });
+
+        socket.on('join_error', (msg) => {
+            document.getElementById('loading-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
+            const err = document.getElementById('join-error');
+            err.innerText = msg;
+            err.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

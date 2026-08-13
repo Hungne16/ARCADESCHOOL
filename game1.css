@@ -1,0 +1,490 @@
+:root {
+    --bg-color: #81d4fa; /* Xanh da trời sáng dễ thương */
+    --text-color: #222;
+    --primary-color: #ff5252; /* Đỏ nhấn */
+    --secondary-color: #00e676; /* Xanh lá mạ */
+    --box-bg: #ffffff; /* Nền trắng cho dễ đọc */
+    --border-color: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    /* Tạo pattern sọc caro mờ mờ cho giống game cổ điển */
+    background-image: linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-color);
+    font-family: 'VT323', monospace;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+body.flash-red {
+    animation: flashRed 0.6s ease-out;
+}
+
+@keyframes flashRed {
+    0% { background-color: #ff5252; box-shadow: inset 0 0 200px rgba(255,0,0,1); }
+    100% { background-color: var(--bg-color); box-shadow: inset 0 0 0px rgba(255,0,0,0); }
+}
+
+/* Xóa bóng đen CRT làm tối màn hình */
+.crt-overlay {
+    display: none; 
+}
+
+.game-container {
+    width: 98%;
+    max-width: 1400px;
+    height: 95vh;
+    display: grid;
+    grid-template-areas: 
+        "header header"
+        "teams terminal"
+        "teams inventory";
+    grid-template-columns: 380px 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 20px;
+    z-index: 5;
+}
+
+/* =========================================
+   HUD / HEADER (Thanh thông tin)
+   ========================================= */
+.hud-top {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-back {
+    background-color: #ffca28; /* Vàng thân thiện */
+    border: 4px solid var(--border-color);
+    border-radius: 8px;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 2.5rem;
+    padding: 10px 25px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #000;
+    transition: all 0.1s;
+}
+
+.btn-back:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+.timer {
+    font-size: 4rem;
+    color: #000;
+    background-color: #eeeeee;
+    padding: 10px 25px;
+    border: 4px solid #000;
+    border-radius: 10px;
+}
+
+.timer.danger {
+    background-color: var(--primary-color);
+    color: #fff;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+/* =========================================
+   TEAMS DASHBOARD
+   ========================================= */
+.teams-dashboard {
+    grid-area: teams;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-content: flex-start;
+}
+
+.team-card {
+    flex: 1;
+    background-color: var(--box-bg);
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.team-card.dead {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    box-shadow: 0px 0px 0px;
+}
+
+.team-card h3 {
+    font-size: 2.2rem;
+    color: #29b6f6;
+    text-shadow: 2px 2px 0px #000;
+    margin-bottom: 5px;
+}
+
+.team-score {
+    font-size: 3rem;
+    color: #ffca28;
+    text-shadow: 2px 2px 0px #000;
+    margin-bottom: 10px;
+}
+
+.hearts {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    font-size: 2rem;
+}
+
+.heart {
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.heart.lost {
+    filter: grayscale(100%);
+    opacity: 0.4;
+    transform: scale(0.7);
+}
+
+.timer {
+    font-size: 4rem;
+    color: #000;
+    background-color: #eeeeee;
+    padding: 10px 25px;
+    border: 4px solid #000;
+    border-radius: 10px;
+}
+
+.timer.danger {
+    background-color: var(--primary-color);
+    color: #fff;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+/* =========================================
+   MAIN GAME BOX (Khung nội dung chính)
+   ========================================= */
+.terminal {
+    grid-area: terminal;
+    background-color: var(--box-bg);
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Đổi thành thanh tiêu đề cute như cửa sổ máy tính hoạt hình */
+.terminal-header {
+    background-color: #29b6f6; 
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 4px solid var(--border-color);
+}
+
+.dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #000;
+}
+.dot.red { background-color: #ff5252; }
+.dot.yellow { background-color: #ffea00; }
+.dot.green { background-color: #00e676; }
+
+.terminal-title {
+    margin-left: 15px;
+    color: #fff;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.terminal-body {
+    padding: 30px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    overflow-y: auto;
+}
+
+.terminal-body > * {
+    flex-shrink: 0;
+}
+
+.station-title {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+}
+
+.puzzle-desc {
+    font-size: 2.5rem; /* Chữ to cho học sinh dễ đọc trên máy chiếu */
+    color: var(--text-color);
+    margin-bottom: 40px;
+    max-width: 95%;
+    line-height: 1.4;
+    background-color: #f5f5f5;
+    padding: 30px;
+    border-radius: 15px;
+    border: 3px dashed #ccc;
+}
+
+.team-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.btn-team {
+    background-color: #eeeeee;
+    border: 4px solid #aaa;
+    border-radius: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 2rem;
+    padding: 10px 25px;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.btn-team:hover:not(:disabled) {
+    background-color: #fff;
+    border-color: #000;
+    color: #000;
+}
+
+.btn-team.active {
+    background-color: #00e676;
+    border-color: #000;
+    color: #000;
+    box-shadow: 0 0 15px #00e676;
+    transform: scale(1.1);
+}
+
+.btn-team:disabled {
+    background-color: #ffcdd2;
+    border-color: #ef9a9a;
+    color: #e53935;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.input-group {
+    display: flex;
+    gap: 20px;
+}
+
+.answer-input {
+    background-color: #fff;
+    border: 6px solid var(--border-color);
+    border-radius: 12px;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 2.5rem;
+    padding: 15px 30px;
+    width: 450px;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+}
+
+.answer-input:focus {
+    border-color: #29b6f6;
+    box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
+}
+
+.btn-submit {
+    background-color: var(--secondary-color);
+    border: 6px solid var(--border-color);
+    border-radius: 12px;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 2.5rem;
+    padding: 15px 40px;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #000;
+    transition: all 0.1s;
+}
+
+.btn-submit:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+/* Shake Animation cho lúc nhập sai */
+.shake {
+    animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    background-color: #ffcdd2 !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-4px, 0, 0); }
+    20%, 80% { transform: translate3d(8px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-12px, 0, 0); }
+    40%, 60% { transform: translate3d(12px, 0, 0); }
+}
+
+/* =========================================
+   INVENTORY (Hòm đồ chứa mật mã)
+   ========================================= */
+.inventory {
+    grid-area: inventory;
+    background-color: var(--box-bg);
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
+}
+
+.inventory h3 {
+    font-size: 3.5rem;
+    color: #555;
+}
+
+.slots {
+    display: flex;
+    gap: 20px;
+}
+
+.slot {
+    width: 100px;
+    height: 100px;
+    border: 6px dashed #aaa;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    color: #ccc;
+    background-color: #fafafa;
+}
+
+.slot.filled {
+    border-style: solid;
+    border-color: #000;
+    background-color: #ffca28;
+    color: #000;
+    text-shadow: 1px 1px 0px #fff;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* =========================================
+   MODALS (Thông báo nảy Spring Bounce)
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: #fff;
+    border: 5px solid #000;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
+    max-width: 500px;
+}
+
+.spring-bounce {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-overlay.hidden .spring-bounce {
+    transform: scale(0.5) translateY(50px);
+    opacity: 0;
+}
+
+#modal-title {
+    font-size: 6rem;
+    color: var(--secondary-color);
+    text-shadow: 4px 4px 0px #000;
+    margin-bottom: 25px;
+}
+
+#modal-text {
+    font-size: 3.5rem;
+    color: #333;
+    margin-bottom: 35px;
+    line-height: 1.4;
+}
+
+.modal-content .pixel-btn {
+    background-color: #29b6f6;
+    color: #fff;
+    border: 6px solid #000;
+    border-radius: 15px;
+    font-family: 'VT323', monospace;
+    font-size: 3.5rem;
+    padding: 15px 50px;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #000;
+}
+
+.modal-content .pixel-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0px 0px 0px #000;
+}
