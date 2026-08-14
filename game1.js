@@ -119,15 +119,15 @@ function renderTeams() {
         const cardHTML = `
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
                 <div class="team-header team-color-${t.id}">${t.name}</div>
-                <div class="team-body" style="flex-direction: column; justify-content: flex-start; align-items: center; padding: 10px;">
-                    <div class="team-info" style="margin-bottom: 5px; width: 100%;">
-                        <div class="hearts" style="font-size: 1.5rem;">
+                <div class="team-body">
+                    <div class="team-info">
+                        <div class="hearts">
                             ${heartsHTML}
                         </div>
-                        <div class="team-score" id="score-${t.id}" style="font-size: 1.5rem; margin-top: 5px;">🪙 ${t.score}</div>
+                        <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
                     </div>
-                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}" style="margin: auto 0 0 0;">
-                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar" style="height: 110px; margin: 0; object-fit: contain;">
+                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}">
+                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
                         <div class="feedback-icon" id="feedback-${t.id}"></div>
                     </div>
                 </div>

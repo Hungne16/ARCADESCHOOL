@@ -11,15 +11,12 @@
     <div class="crt-overlay"></div>
 
     <div class="game-container">
-        <!-- HUD Header (Back & Timer) -->
-        <header class="hud-top">
-            <button class="btn-back" onclick="window.location.href='index.html'">← RỜI PHÒNG</button>
-            <div class="timer" id="timer">10:00</div>
-        </header>
-
         <div class="main-split">
-            <!-- Left Teams -->
-            <aside class="teams-side left" id="teams-left"></aside>
+            <!-- Left Teams Column -->
+            <aside class="side-column">
+                <button class="btn-back" onclick="window.location.href='index.html'">← RỜI PHÒNG</button>
+                <div class="teams-side left" id="teams-left"></div>
+            </aside>
 
             <!-- Center Content -->
             <main class="center-content">
@@ -60,8 +57,11 @@
                 </footer>
             </main>
 
-            <!-- Right Teams -->
-            <aside class="teams-side right" id="teams-right"></aside>
+            <!-- Right Teams Column -->
+            <aside class="side-column">
+                <div class="timer" id="timer">10:00</div>
+                <div class="teams-side right" id="teams-right"></div>
+            </aside>
         </div>
 
     <!-- Popup Overlay (Success / Victory / GameOver) -->
