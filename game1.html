@@ -17,34 +17,38 @@
             <div class="timer" id="timer">10:00</div>
         </header>
 
-        <!-- Teams Dashboard -->
-        <section class="teams-dashboard" id="teams-dashboard">
-            <!-- Render bằng JS -->
-        </section>
+        <div class="main-split">
+            <!-- Left Teams -->
+            <aside class="teams-side left" id="teams-left"></aside>
 
-        <!-- Main Content -->
-        <main class="terminal">
-            <div class="terminal-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="terminal-title">SYSTEM.EXE</span>
-            </div>
-            <div class="terminal-body" id="puzzle-container">
-                <!-- Nội dung câu hỏi sẽ được inject vào đây bằng JS -->
-            </div>
-        </main>
+            <!-- Center Content -->
+            <main class="center-content">
+                <main class="terminal">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">SYSTEM.EXE</span>
+                    </div>
+                    <div class="terminal-body" id="puzzle-container">
+                        <!-- Nội dung câu hỏi sẽ được inject vào đây bằng JS -->
+                    </div>
+                </main>
 
-        <!-- Inventory / Passcode -->
-        <footer class="inventory">
-            <h3>MÃ BÍ MẬT THU THẬP:</h3>
-            <div class="slots">
-                <div class="slot" id="slot-1">?</div>
-                <div class="slot" id="slot-2">?</div>
-                <div class="slot" id="slot-3">?</div>
-            </div>
-        </footer>
-    </div>
+                <!-- Inventory / Passcode -->
+                <footer class="inventory">
+                    <h3>MÃ BÍ MẬT THU THẬP:</h3>
+                    <div class="slots">
+                        <div class="slot" id="slot-1">?</div>
+                        <div class="slot" id="slot-2">?</div>
+                        <div class="slot" id="slot-3">?</div>
+                    </div>
+                </footer>
+            </main>
+
+            <!-- Right Teams -->
+            <aside class="teams-side right" id="teams-right"></aside>
+        </div>
 
     <!-- Popup Overlay (Success / Victory / GameOver) -->
     <div class="modal-overlay hidden" id="modal">

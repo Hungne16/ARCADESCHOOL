@@ -89,22 +89,38 @@ body {
 }
 
 /* =========================================
-   TEAMS DASHBOARD (Tái sử dụng Game 1)
+   TEAMS DASHBOARD & SPLIT LAYOUT
    ========================================= */
-.teams-dashboard {
+.main-split {
     display: flex;
-    justify-content: space-between;
+    flex-grow: 1;
+    gap: 20px;
+    min-height: 0;
+}
+
+.teams-side {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
     gap: 15px;
+    overflow-y: auto;
+}
+
+.center-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0;
 }
 
 .team-card {
-    flex: 1;
     background-color: var(--box-bg);
-    border: 4px solid var(--border-color);
-    border-radius: 12px;
-    padding: 15px;
+    border: 3px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 5px;
     text-align: center;
-    box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
     transition: all 0.3s;
 }
 
@@ -114,24 +130,24 @@ body {
 }
 
 .team-card h3 {
-    font-size: 3rem;
+    font-size: 1.8rem;
     color: #29b6f6;
-    text-shadow: 2px 2px 0px #000;
+    text-shadow: 1px 1px 0px #000;
     margin-bottom: 5px;
 }
 
 .team-score {
-    font-size: 4rem;
+    font-size: 2.2rem;
     color: #ffca28;
     text-shadow: 2px 2px 0px #000;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .hearts {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    font-size: 3rem;
+    gap: 3px;
+    font-size: 1.5rem;
 }
 
 .heart.lost {

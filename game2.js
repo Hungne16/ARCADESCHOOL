@@ -86,13 +86,18 @@ function initGame() {
 }
 
 function renderTeams() {
-    teamsDashboard.innerHTML = '';
-    teams.forEach(t => {
+    const teamsLeft = document.getElementById('teams-left');
+    const teamsRight = document.getElementById('teams-right');
+    if(teamsLeft) teamsLeft.innerHTML = '';
+    if(teamsRight) teamsRight.innerHTML = '';
+
+    teams.forEach((t, index) => {
         let heartsHTML = '';
         for(let i = 0; i < 3; i++) {
             heartsHTML += `<span class="heart ${i >= t.hp ? 'lost' : ''}">❤️</span>`;
         }
-        teamsDashboard.innerHTML += `
+
+        const cardHTML = `
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
                 <h3>${t.name}</h3>
                 <div class="team-score" id="score-${t.id}">${t.score}</div>
@@ -101,6 +106,12 @@ function renderTeams() {
                 </div>
             </div>
         `;
+        
+        if (index % 2 === 0) {
+            if(teamsLeft) teamsLeft.innerHTML += cardHTML;
+        } else {
+            if(teamsRight) teamsRight.innerHTML += cardHTML;
+        }
     });
 }
 
