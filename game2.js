@@ -1,50 +1,40 @@
-
+// Cấu hình trò chơi
 const questions = [
     {
+        q: "Hệ thống bị khóa. Hãy tìm quy luật<br>của dãy số sau để mở cửa:<br><span class=\"text-red-600 text-6xl mt-4 inline-block\">2, 6, 12, 20, 30, ?</span>",
+        correct: "42",
+        type: "input"
+    },
+    {
         q: "Chiến thắng Điện Biên Phủ diễn ra vào năm nào?",
-        opts: { A: "1945", B: "1954", C: "1975", D: "1930" },
-        correct: "B"
-    },
-    {
-        q: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?",
-        opts: { A: "Fansipan", B: "Bạch Mã", C: "Langbiang", D: "Ngọc Linh" },
-        correct: "A"
-    },
-    {
-        q: "Căn bậc hai của 144 là bao nhiêu?",
-        opts: { A: "10", B: "12", C: "14", D: "16" },
-        correct: "B"
-    },
-    {
-        q: "Khí nào chiếm tỉ lệ lớn nhất trong bầu khí quyển Trái Đất?",
-        opts: { A: "Oxy (O2)", B: "Nitơ (N2)", C: "Cacbonic (CO2)", D: "Hydro (H2)" },
-        correct: "B"
-    },
-    {
-        q: "Tác giả của kiệt tác 'Truyện Kiều' là ai?",
-        opts: { A: "Nguyễn Trãi", B: "Nguyễn Du", C: "Hồ Xuân Hương", D: "Nam Cao" },
-        correct: "B"
+        correct: "1954",
+        type: "input"
     }
 ];
 
 let currentQuestion = 0;
 let teams = [];
+
+// Khởi tạo 6 đội như yêu cầu
+const teamsCount = 6;
 for(let i=1; i<=teamsCount; i++) {
-    teams.push({ id: i, name: `Đội ${i}`, hp: 3, score: 0 });
+    teams.push({ id: i, name: `ĐỘI ${i}`, hp: 3, maxHp: 3, score: 0 });
 }
 
 let teamAnswers = {};
 teams.forEach(t => teamAnswers[t.id] = null);
 
+let timeLeft = 30;
+let timerInterval = null;
+
 // DOM Elements
 const qText = document.getElementById('question-text');
-const tAnsA = document.getElementById('text-a');
-const tAnsB = document.getElementById('text-b');
-const tAnsC = document.getElementById('text-c');
-const tAnsD = document.getElementById('text-d');
 const qCounter = document.getElementById('question-counter');
-const teamsDashboard = document.getElementById('teams-dashboard');
+const teamsContainer = document.getElementById('teams-container');
 const modal = document.getElementById('modal');
+const timerText = document.getElementById('timer-text');
+const answerInput = document.getElementById('answer-input');
+const btnSubmit = document.getElementById('btn-submit');
 
 // Audio (8-bit sounds)
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -85,43 +75,54 @@ function initGame() {
     loadQuestion();
 }
 
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 30;
+    timerText.innerText = timeLeft;
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerText.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            // Hết giờ logic
+            timerText.innerText = "0";
+            timerText.classList.add('text-red-500');
+        }
+    }, 1000);
+}
+
 function renderTeams() {
-    const teamsLeft = document.getElementById('teams-left');
-    const teamsRight = document.getElementById('teams-right');
-    if(teamsLeft) teamsLeft.innerHTML = '';
-    if(teamsRight) teamsRight.innerHTML = '';
+    if(!teamsContainer) return;
+    teamsContainer.innerHTML = '';
 
-    const half = Math.ceil(teams.length / 2);
-
-    teams.forEach((t, index) => {
+    teams.forEach((t) => {
         let heartsHTML = '';
-        for(let i = 0; i < 3; i++) {
-            heartsHTML += `<span class="heart ${i >= t.hp ? 'lost' : ''}">❤️</span>`;
+        for(let i = 0; i < t.maxHp; i++) {
+            heartsHTML += `<span class="heart ${i >= t.hp ? 'lost grayscale opacity-40' : ''}">❤️</span>`;
         }
 
+        const colorClass = `bg-team-${t.id}`;
+        
         const cardHTML = `
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
-                <div class="team-header team-color-${t.id}">${t.name}</div>
+                <div class="team-header ${colorClass}">${t.name}</div>
                 <div class="team-body">
-                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}">
-                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
-                        <div class="feedback-icon" id="feedback-${t.id}"></div>
+                    <!-- Ảnh avatar, dùng placeholder hoặc file có sẵn -->
+                    <img class="team-avatar" src="character/${t.id}.png" onerror="this.src='https://api.dicebear.com/7.x/pixel-art/svg?seed=${t.id}'" alt="Avatar">
+                    
+                    <div class="team-stats">
+                        <div class="hearts">${heartsHTML} <span class="font-bold text-black ml-1">${t.hp}/${t.maxHp}</span></div>
+                        <div class="team-score font-bold">Điểm:<br>${t.score}</div>
                     </div>
-                    <div class="team-info">
-                        <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
-                        <div class="hearts">
-                            ${heartsHTML}
-                        </div>
-                    </div>
+                    
+                    <!-- Icon feedback (chỉ hiện khi đúng/sai) -->
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-5xl hidden z-50 drop-shadow-md" id="feedback-${t.id}"></div>
                 </div>
             </div>
         `;
         
-        if (index < half) {
-            if(teamsLeft) teamsLeft.innerHTML += cardHTML;
-        } else {
-            if(teamsRight) teamsRight.innerHTML += cardHTML;
-        }
+        teamsContainer.innerHTML += cardHTML;
     });
 }
 
@@ -137,35 +138,44 @@ function loadQuestion() {
     }
 
     const q = questions[currentQuestion];
-    qCounter.innerText = `Câu: ${currentQuestion + 1}/${questions.length}`;
-    qText.innerText = q.q;
+    if(qCounter) qCounter.innerText = `📋 Câu: ${currentQuestion + 1}/${questions.length}`;
+    if(qText) qText.innerHTML = q.q;
     
-    // Support options A-F
-    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(l => {
-        const textEl = document.getElementById(`text-${l}`);
-        const cardEl = document.getElementById(`ans-${l}`);
-        const L = l.toUpperCase();
-        if(textEl && q.opts[L]) {
-            textEl.innerText = q.opts[L];
-            cardEl.style.display = 'flex';
-        } else if (cardEl) {
-            cardEl.style.display = 'none';
-        }
-    });
+    if(answerInput) {
+        answerInput.value = '';
+        answerInput.disabled = false;
+        answerInput.focus();
+    }
+    if(btnSubmit) btnSubmit.disabled = false;
+    
+    timerText.classList.remove('text-red-500');
+    startTimer();
 
-    // Reset UI
-    document.querySelectorAll('.answer-card').forEach(c => {
-        c.classList.remove('dimmed', 'correct');
-    });
-    
+    // Reset UI các đội
     teams.forEach(t => {
         teamAnswers[t.id] = t.hp <= 0 ? "DEAD" : null;
         const card = document.getElementById(`card-team-${t.id}`);
         if(card) {
-            card.style.borderColor = '#fff';
-            card.style.transform = 'scale(1)'; // reset scale
-            const badge = document.getElementById(`badge-${t.id}`);
-            if(badge) badge.remove();
+            card.classList.remove('selected', 'spring-bounce', 'shake');
+            const feedback = document.getElementById(`feedback-${t.id}`);
+            if(feedback) feedback.classList.add('hidden');
+        }
+    });
+}
+
+// Giả lập chọn đội khi click vào input
+if(btnSubmit && answerInput) {
+    btnSubmit.addEventListener('click', () => {
+        const val = answerInput.value.trim();
+        if(val) {
+            playSound('lock');
+            answerInput.disabled = true;
+            btnSubmit.disabled = true;
+            
+            // For standalone testing without firebase: Check answer immediately for Team 1
+            setTimeout(() => {
+                revealAnswers(val);
+            }, 1000);
         }
     });
 }
@@ -174,95 +184,69 @@ function selectTeam(id) {
     teams.forEach(t => {
         const card = document.getElementById(`card-team-${t.id}`);
         if (card && t.hp > 0) {
-            card.style.borderColor = '#fff';
-            const badge = document.getElementById(`badge-${t.id}`);
-            if(badge && badge.innerText === 'ĐANG CHỌN...') badge.remove();
+            card.classList.remove('selected');
         }
     });
     const activeCard = document.getElementById(`card-team-${id}`);
     if(activeCard) {
-        activeCard.style.borderColor = '#ffca28'; // Màu vàng nổi bật
-        // Thêm badge ĐANG CHỌN
-        const existingBadge = document.getElementById(`badge-${id}`);
-        if(!existingBadge) {
-            activeCard.innerHTML += `<div id="badge-${id}" style="background: #ffca28; color:#000; padding: 5px 15px; border-radius: 5px; font-weight:bold; font-size: 2rem; margin-top: 10px; text-transform: uppercase; animation: blink 1s infinite;">ĐANG CHỌN...</div>`;
-        }
+        activeCard.classList.add('selected');
     }
 }
 
-function setAnswer(teamId, letter) {
+function setAnswer(teamId, answer) {
     playSound('lock');
-    teamAnswers[teamId] = letter;
-    
-    const card = document.getElementById(`card-team-${teamId}`);
-    if (card) {
-        card.style.borderColor = '#00ffcc';
-        card.style.transform = 'scale(0.95)'; // Indicate locked
-        const badge = document.getElementById(`badge-${teamId}`);
-        if(badge) {
-            badge.innerText = `ĐÃ CHỐT: ${letter}`;
-            badge.style.background = '#00ffcc';
-            badge.style.animation = 'none';
-        } else {
-            card.innerHTML += `<div id="badge-${teamId}" style="background: #00ffcc; color:#000; padding: 5px 15px; border-radius: 5px; font-weight:bold; font-size: 2rem; margin-top: 10px; text-transform: uppercase;">ĐÃ CHỐT: ${letter}</div>`;
-        }
-    }
+    teamAnswers[teamId] = answer;
+    // Giao diện có thể update để báo đội đã chốt
 }
 
 // CÔNG BỐ KẾT QUẢ
-function revealAnswers() {
+function revealAnswers(playerAnswerStr) {
+    clearInterval(timerInterval);
     const q = questions[currentQuestion];
-    const correctAns = q.correct;
-
-    // Làm mờ các ô sai, nhấp nháy ô đúng
-    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(letter => {
-        const card = document.getElementById(`ans-${letter}`);
-        if(card) {
-            if (letter.toUpperCase() === correctAns) {
-                card.classList.add('correct');
-            } else {
-                card.classList.add('dimmed');
-            }
-        }
-    });
+    const correctAns = q.correct.toString().toLowerCase();
     
-    let someoneWrong = false;
-    let someoneCorrect = false;
+    let wrongCount = 0;
+    let correctCount = 0;
+
+    // Standalone logic: check the typed answer for team 1 just for demo
+    if(playerAnswerStr) {
+        teamAnswers[1] = playerAnswerStr;
+    }
 
     teams.forEach(t => {
         if (t.hp <= 0) return;
+        if (!teamAnswers[t.id]) return; // Chưa trả lời
         
-        const avatarWrapper = document.getElementById(`avatar-wrapper-${t.id}`);
         const feedbackIcon = document.getElementById(`feedback-${t.id}`);
         const cardUI = document.getElementById(`card-team-${t.id}`);
 
-        if (teamAnswers[t.id] === correctAns) {
+        if (teamAnswers[t.id].toString().toLowerCase() === correctAns) {
             t.score += 100;
-            someoneCorrect = true;
+            correctCount++;
             if (cardUI) cardUI.classList.add('spring-bounce');
-            if (avatarWrapper && feedbackIcon) {
+            if (feedbackIcon) {
                 feedbackIcon.innerText = '✔️';
-                avatarWrapper.classList.add('pop-up', 'correct');
-                setTimeout(() => avatarWrapper.classList.remove('pop-up', 'correct'), 3000);
+                feedbackIcon.classList.remove('hidden');
+                feedbackIcon.classList.add('text-green-500', 'spring-bounce');
             }
         } else {
             t.hp--;
-            someoneWrong = true;
+            wrongCount++;
             if (cardUI) {
                 cardUI.classList.remove('shake');
                 void cardUI.offsetWidth;
                 cardUI.classList.add('shake');
             }
-            if (avatarWrapper && feedbackIcon) {
+            if (feedbackIcon) {
                 feedbackIcon.innerText = '❌';
-                avatarWrapper.classList.add('pop-up', 'wrong');
-                setTimeout(() => avatarWrapper.classList.remove('pop-up', 'wrong'), 3000);
+                feedbackIcon.classList.remove('hidden');
+                feedbackIcon.classList.add('text-red-500', 'spring-bounce');
             }
         }
     });
 
     setTimeout(() => {
-        renderTeams(); // Update UI scores and HP
+        renderTeams();
     }, 1000);
 
     if (wrongCount > 0) {
@@ -270,7 +254,7 @@ function revealAnswers() {
         document.body.classList.remove('flash-red');
         void document.body.offsetWidth;
         document.body.classList.add('flash-red');
-    } else {
+    } else if (correctCount > 0) {
         playSound('correct');
     }
 
@@ -278,9 +262,9 @@ function revealAnswers() {
         if (teams.every(t => t.hp <= 0)) {
             gameOver();
         } else {
-            showResultModal(correctCount, correctAns);
+            showResultModal(correctCount, q.correct);
         }
-    }, 3000);
+    }, 2500);
 }
 
 function showResultModal(correctCount, correctAns) {
@@ -288,8 +272,8 @@ function showResultModal(correctCount, correctAns) {
     const modalText = document.getElementById('modal-text');
     
     modalTitle.innerText = "KẾT QUẢ!";
-    modalTitle.style.color = "#00e676";
-    modalText.innerHTML = `Đáp án đúng là <strong>${correctAns}</strong>!<br>Có ${correctCount} đội trả lời đúng.`;
+    modalTitle.className = "text-6xl mb-4 text-green-600 font-bold";
+    modalText.innerHTML = `Đáp án đúng là <strong class="text-blue-600">${correctAns}</strong>!<br>Có ${correctCount} đội trả lời đúng.`;
     
     modal.classList.remove('hidden');
 }
@@ -305,7 +289,7 @@ function gameOver() {
     const modalText = document.getElementById('modal-text');
     
     modalTitle.innerText = "THẢM HỌA!";
-    modalTitle.style.color = "#ff5252";
+    modalTitle.className = "text-6xl mb-4 text-red-600 font-bold";
     modalText.innerText = "Tất cả các đội đã Tử Trận!\nKhông ai sống sót qua Đấu Trường Sinh Tồn.";
     
     modal.classList.remove('hidden');
@@ -319,33 +303,27 @@ function showVictory() {
     let mvp = [...aliveTeams].sort((a,b) => b.score - a.score)[0];
 
     modalTitle.innerText = "SINH TỒN THÀNH CÔNG!";
-    modalTitle.style.color = "#ffd700";
+    modalTitle.className = "text-6xl mb-4 text-yellow-500 font-bold";
     modalText.innerHTML = `Chúc mừng các đội sống sót!<br>🥇 MVP: <strong>${mvp.name}</strong> (${mvp.score} điểm)!`;
     
     modal.classList.remove('hidden');
 }
 
-// SOCKET LISTENERS
+// SOCKET LISTENERS (Bảo lưu logic Firebase cũ nếu dùng Multiplayer)
 const urlParams = new URLSearchParams(window.location.search);
 const roomPin = urlParams.get('room');
-const teamsCount = parseInt(urlParams.get('teams') || 4);
 
-if (!roomPin) {
-    alert("CẢNH BÁO: Không tìm thấy Mã Phòng (PIN)! Vui lòng quay lại Trang Chủ để nhập mã phòng.");
-}
-
-if (roomPin) {
+if (roomPin && typeof db !== 'undefined') {
     let lastProcessedAction = null;
     
-    // Hiển thị thông báo nhỏ báo đã kết nối trên màn hình
     let debugMsg = document.getElementById('debug-socket');
     if(!debugMsg) {
         debugMsg = document.createElement('div');
         debugMsg.id = 'debug-socket';
-        debugMsg.style.cssText = 'position:fixed; top:10px; left:10px; background:green; color:white; padding:5px 10px; font-size:1.5rem; z-index:9999; border-radius:5px;';
+        debugMsg.style.cssText = 'position:fixed; top:10px; left:10px; background:green; color:white; padding:5px 10px; font-size:1.5rem; z-index:9999; border-radius:5px; font-family:"VT323"';
         document.body.appendChild(debugMsg);
     }
-    debugMsg.innerText = `Đã kết nối phòng: ${roomPin} (Firebase)`;
+    debugMsg.innerText = `Phòng: ${roomPin} (Connected)`;
 
     db.ref('rooms/' + roomPin + '/actions').on('child_added', (snap) => {
         const data = snap.val();
@@ -354,13 +332,13 @@ if (roomPin) {
         lastProcessedAction = data.ts;
         
         const { action, payload } = data;
-        console.log("Received action:", action, payload);
         
         if (action === 'select_team') {
             selectTeam(payload);
         } else if (action === 'set_answer') {
             setAnswer(payload.team, payload.answer);
         } else if (action === 'reveal') {
+            // Teacher calls reveal
             revealAnswers();
         } else if (action === 'next_question') {
             nextQuestion();

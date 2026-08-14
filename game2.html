@@ -3,59 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đấu Trường Sinh Tồn - Quiz Game</title>
+    <title>Đấu Trường Sinh Tồn - Pixel Art</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="game2.css?v=3">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ffca28', 
+                        secondary: '#29b6f6',
+                        bgBase: '#2b2b2b'
+                    },
+                    fontFamily: {
+                        'vt323': ['VT323', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="game2.css?v=5">
 </head>
-<body>
-    <div class="game-container">
-        <!-- HUD Header (Back & Progress) -->
-        <header class="hud-top">
-            <button class="btn-back" onclick="window.location.href='index.html'">← RỜI PHÒNG</button>
-            <div class="hud-title">ĐẤU TRƯỜNG SINH TỒN</div>
-            <div class="question-counter" id="question-counter">Câu: 1/5</div>
-        </header>
+<body class="font-vt323 text-white h-screen flex flex-col overflow-hidden pixel-bg relative">
+    
+    <!-- Background Grass -->
+    <div class="absolute bottom-0 left-0 right-0 h-[25vh] bg-green-500 border-t-8 border-green-700 z-0 pixel-grass"></div>
 
-        <div class="main-split">
-            <!-- Left Teams -->
-            <aside class="teams-side left" id="teams-left"></aside>
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4 z-10">
+        <button class="pixel-btn btn-yellow text-black text-2xl px-4 py-2 hover:brightness-110" onclick="window.location.href='index.html'">← RỜI PHÒNG</button>
+        
+        <div class="relative flex justify-center items-center mt-2">
+            <div class="absolute -top-12 z-20 text-6xl drop-shadow-md">🏆</div>
+            <div class="pixel-banner-blue text-5xl text-white px-10 py-3 shadow-pixel">★ ĐẤU TRƯỜNG SINH TỒN ★</div>
+        </div>
+        
+        <div class="pixel-box bg-white text-black text-3xl px-6 py-2" id="question-counter">📋 Câu: 1/5</div>
+    </header>
 
-            <!-- Center Content -->
-            <main class="center-content quiz-board">
-                <div class="question-box">
-                    <h2 id="question-text">Đang tải câu hỏi...</h2>
+    <!-- Main Content -->
+    <main class="flex-1 flex gap-8 px-8 mt-2 z-10 max-h-[55vh]">
+        
+        <!-- Question Board -->
+        <div class="flex-1 relative flex flex-col items-center">
+            <!-- Chains -->
+            <div class="absolute -top-8 left-1/4 w-4 h-12 bg-gray-300 pixel-chain z-0"></div>
+            <div class="absolute -top-8 right-1/4 w-4 h-12 bg-gray-300 pixel-chain z-0"></div>
+            
+            <div class="bg-white w-full h-full pixel-border-blue relative flex flex-col items-center p-6 z-10 shadow-pixel-heavy text-black">
+                <div class="pixel-label-blue text-white text-3xl px-8 py-1 absolute -top-5">CÂU HỎI</div>
+                
+                <div class="flex-1 flex items-center justify-center text-center w-full mt-4">
+                    <h2 id="question-text" class="text-4xl md:text-5xl leading-relaxed text-black font-bold">
+                        Hệ thống bị khóa. Hãy tìm quy luật<br>của dãy số sau để mở cửa:<br>
+                        <span class="text-red-600 text-6xl mt-4 inline-block">2, 6, 12, 20, 30, ?</span>
+                    </h2>
                 </div>
                 
-                <div class="answers-grid" id="answers-grid">
-                    <!-- Nút đáp án (A, B, C, D, E, F) -->
-                    <div class="answer-card" id="ans-a"><span class="letter">A</span> <span class="text" id="text-a">...</span></div>
-                    <div class="answer-card" id="ans-b"><span class="letter">B</span> <span class="text" id="text-b">...</span></div>
-                    <div class="answer-card" id="ans-c"><span class="letter">C</span> <span class="text" id="text-c">...</span></div>
-                    <div class="answer-card" id="ans-d"><span class="letter">D</span> <span class="text" id="text-d">...</span></div>
-                    <div class="answer-card" id="ans-e"><span class="letter" style="background:#8e44ad;">E</span> <span class="text" id="text-e">...</span></div>
-                    <div class="answer-card" id="ans-f"><span class="letter" style="background:#e84118;">F</span> <span class="text" id="text-f">...</span></div>
+                <div class="pixel-label-blue text-white text-2xl px-8 py-1 mt-2 mb-0 relative z-20 top-4">ĐÁP ÁN</div>
+                <div class="w-full flex gap-4 mt-0 px-10 z-10 pb-4">
+                    <input type="text" id="answer-input" class="flex-1 pixel-input text-3xl p-4 text-black focus:outline-none focus:bg-blue-50" placeholder="Nhập đáp án của đội...">
+                    <button class="pixel-btn btn-yellow text-black text-3xl px-8 py-4 whitespace-nowrap hover:brightness-110" id="btn-submit">GỬI ĐÁP ÁN</button>
                 </div>
-            </main>
-
-            <!-- Right Teams -->
-            <aside class="teams-side right" id="teams-right"></aside>
+            </div>
         </div>
 
+        <!-- Sidebar -->
+        <div class="w-72 flex flex-col gap-8">
+            <div class="bg-white pixel-border-blue flex flex-col items-center p-4 shadow-pixel-heavy relative h-[60%] justify-center">
+                <div class="pixel-label-blue text-white text-2xl px-6 py-1 absolute -top-5">THỜI GIAN</div>
+                <div class="relative w-40 h-40 mt-2 flex items-center justify-center">
+                    <!-- Timer Circle -->
+                    <div class="absolute inset-0 rounded-full border-[12px] border-yellow-400 shadow-inner"></div>
+                    <div class="absolute inset-0 rounded-full border-[12px] border-blue-500" style="clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 0);"></div>
+                    <div class="absolute -top-6 text-5xl drop-shadow-sm">⏱️</div>
+                    <div class="flex flex-col items-center justify-center z-10 pt-2">
+                        <span class="text-7xl text-blue-700 font-bold leading-none" id="timer-text">30</span>
+                        <span class="text-xl text-gray-600 font-bold">GIÂY</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white pixel-border-blue flex flex-col items-center p-4 shadow-pixel-heavy relative flex-1 justify-center">
+                <div class="pixel-label-blue text-white text-2xl px-6 py-1 absolute -top-5 whitespace-nowrap">ĐIỂM CÂU HỎI</div>
+                <div class="text-6xl text-black flex items-center gap-3 mt-4 font-bold">
+                    <span class="drop-shadow-md">🪙</span>
+                    <span>100</span>
+                </div>
+            </div>
+        </div>
+    </main>
 
+    <!-- Teams List -->
+    <div class="w-full px-8 mt-auto mb-14 z-10 h-[22vh]">
+        <div class="grid grid-cols-6 gap-3 h-full" id="teams-container">
+            <!-- Rendered by JS -->
+        </div>
     </div>
 
-    <!-- Popup Overlay (Success / Victory / GameOver) -->
-    <div class="modal-overlay hidden" id="modal">
-        <div class="modal-content spring-bounce">
-            <h2 id="modal-title">...</h2>
-            <p id="modal-text">...</p>
-            <button class="pixel-btn" id="modal-btn" onclick="nextQuestion()">TIẾP TỤC</button>
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white flex justify-center items-center py-2 z-20 absolute bottom-0 w-full border-t-[6px] border-blue-950 shadow-[inset_0_4px_0_rgba(0,0,0,0.3)]">
+        <div class="absolute left-10 bottom-1 text-5xl drop-shadow-lg">📚✏️</div>
+        <div class="text-3xl text-yellow-300 font-bold tracking-widest text-shadow-pixel my-1">⭐ BÌNH TĨNH - TỰ TIN - CHIẾN THẮNG! ⭐</div>
+        <div class="absolute right-10 bottom-1 text-5xl drop-shadow-lg">🎒🌱</div>
+    </footer>
+
+    <!-- Modal overlay (hidden by default) -->
+    <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden backdrop-blur-sm" id="modal">
+        <div class="bg-white pixel-border-blue p-8 flex flex-col items-center text-center max-w-2xl spring-bounce shadow-pixel-heavy">
+            <h2 id="modal-title" class="text-6xl mb-4 text-green-600 font-bold">...</h2>
+            <p id="modal-text" class="text-4xl mb-8 text-black">...</p>
+            <button class="pixel-btn btn-yellow text-black text-4xl px-10 py-3" onclick="nextQuestion()">TIẾP TỤC</button>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="firebase-config.js"></script>
-    <script src="game2.js?v=3"></script>
+    <script src="game2.js?v=5"></script>
 </body>
 </html>
