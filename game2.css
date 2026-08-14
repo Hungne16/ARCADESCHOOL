@@ -127,17 +127,7 @@ body {
     background-repeat: repeat-y;
 }
 
-/* 4. Team Cards styling */
-.team-card {
-    border: 4px solid #000;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
-    overflow: hidden;
-    height: 100%;
-    transition: transform 0.2s;
-}
+
 
 .team-card.dead {
     filter: grayscale(100%);
@@ -159,15 +149,7 @@ body {
     100% { outline-color: #ffca28; }
 }
 
-.team-header {
-    color: white;
-    text-align: center;
-    font-size: 1.8rem;
-    padding: 2px 0;
-    border-bottom: 4px solid #000;
-    text-shadow: 2px 2px 0px #000;
-    font-weight: bold;
-}
+
 
 /* Colors for the 6 teams as requested */
 .bg-team-1 { background-color: #e53935; } /* Red */
@@ -177,49 +159,7 @@ body {
 .bg-team-5 { background-color: #fb8c00; } /* Orange/Yellow */
 .bg-team-6 { background-color: #e91e63; } /* Pink */
 
-.team-body {
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-    background-color: white;
-    padding: 0 4px;
-    position: relative;
-}
 
-.team-avatar {
-    height: 100px;
-    width: auto;
-    object-fit: contain;
-    margin-right: auto;
-    margin-left: -5px;
-    margin-bottom: -2px;
-    transform-origin: bottom center;
-}
-
-.team-stats {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-end;
-    padding-bottom: 8px;
-    height: 100%;
-}
-
-.team-score {
-    font-size: 1.8rem;
-    color: #000;
-    line-height: 1;
-}
-
-.hearts {
-    font-size: 1.5rem;
-    margin-bottom: 4px;
-}
-
-.heart.lost {
-    filter: grayscale(100%);
-    opacity: 0.3;
-}
 
 /* Animations */
 .spring-bounce {

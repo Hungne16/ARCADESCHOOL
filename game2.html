@@ -36,11 +36,11 @@
         <button class="pixel-btn btn-yellow text-black text-2xl px-4 py-2 hover:brightness-110" onclick="window.location.href='index.html'">← RỜI PHÒNG</button>
         
         <div class="relative flex justify-center items-center mt-2">
-            <div class="absolute -top-12 z-20 text-6xl drop-shadow-md">🏆</div>
-            <div class="pixel-banner-blue text-5xl text-white px-10 py-3 shadow-pixel">★ ĐẤU TRƯỜNG SINH TỒN ★</div>
+            <div class="absolute -top-10 z-20 text-5xl drop-shadow-md">🏆</div>
+            <div class="pixel-banner-blue text-4xl text-white px-8 py-2 shadow-pixel">★ ĐẤU TRƯỜNG SINH TỒN ★</div>
         </div>
         
-        <div class="pixel-box bg-white text-black text-3xl px-6 py-2" id="question-counter">📋 Câu: 1/5</div>
+        <div class="pixel-box bg-white text-black text-2xl px-4 py-2" id="question-counter">📋 Câu: 1/5</div>
     </header>
 
     <!-- Main Content -->
@@ -55,40 +55,40 @@
             <div class="bg-white w-full h-full pixel-border-blue relative flex flex-col items-center p-6 z-10 shadow-pixel-heavy text-black">
                 <div class="pixel-label-blue text-white text-3xl px-8 py-1 absolute -top-5">CÂU HỎI</div>
                 
-                <div class="flex-1 flex items-center justify-center text-center w-full mt-4">
-                    <h2 id="question-text" class="text-4xl md:text-5xl leading-relaxed text-black font-bold">
+                <div class="flex-1 flex items-center justify-center text-center w-full mt-2">
+                    <h2 id="question-text" class="text-3xl md:text-4xl leading-relaxed text-black font-bold">
                         Hệ thống bị khóa. Hãy tìm quy luật<br>của dãy số sau để mở cửa:<br>
-                        <span class="text-red-600 text-6xl mt-4 inline-block">2, 6, 12, 20, 30, ?</span>
+                        <span class="text-red-600 text-5xl mt-2 inline-block">2, 6, 12, 20, 30, ?</span>
                     </h2>
                 </div>
                 
-                <div class="pixel-label-blue text-white text-2xl px-8 py-1 mt-2 mb-0 relative z-20 top-4">ĐÁP ÁN</div>
-                <div class="w-full flex gap-4 mt-0 px-10 z-10 pb-4">
-                    <input type="text" id="answer-input" class="flex-1 pixel-input text-3xl p-4 text-black focus:outline-none focus:bg-blue-50" placeholder="Nhập đáp án của đội...">
-                    <button class="pixel-btn btn-yellow text-black text-3xl px-8 py-4 whitespace-nowrap hover:brightness-110" id="btn-submit">GỬI ĐÁP ÁN</button>
+                <div class="pixel-label-blue text-white text-xl px-6 py-1 mt-1 mb-0 relative z-20 top-3">ĐÁP ÁN</div>
+                <div class="w-full flex gap-4 mt-0 px-8 z-10 pb-2">
+                    <input type="text" id="answer-input" class="flex-1 pixel-input text-2xl p-3 text-black focus:outline-none focus:bg-blue-50" placeholder="Nhập đáp án của đội...">
+                    <button class="pixel-btn btn-yellow text-black text-2xl px-6 py-3 whitespace-nowrap hover:brightness-110" id="btn-submit">GỬI ĐÁP ÁN</button>
                 </div>
             </div>
         </div>
 
         <!-- Sidebar -->
         <div class="w-72 flex flex-col gap-8">
-            <div class="bg-white pixel-border-blue flex flex-col items-center p-4 shadow-pixel-heavy relative h-[60%] justify-center">
-                <div class="pixel-label-blue text-white text-2xl px-6 py-1 absolute -top-5">THỜI GIAN</div>
-                <div class="relative w-40 h-40 mt-2 flex items-center justify-center">
+            <div class="bg-white pixel-border-blue flex flex-col items-center p-3 shadow-pixel-heavy relative h-[55%] justify-center">
+                <div class="pixel-label-blue text-white text-xl px-4 py-1 absolute -top-4">THỜI GIAN</div>
+                <div class="relative w-32 h-32 mt-2 flex items-center justify-center">
                     <!-- Timer Circle -->
-                    <div class="absolute inset-0 rounded-full border-[12px] border-yellow-400 shadow-inner"></div>
-                    <div class="absolute inset-0 rounded-full border-[12px] border-blue-500" style="clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 0);"></div>
-                    <div class="absolute -top-6 text-5xl drop-shadow-sm">⏱️</div>
-                    <div class="flex flex-col items-center justify-center z-10 pt-2">
-                        <span class="text-7xl text-blue-700 font-bold leading-none" id="timer-text">30</span>
-                        <span class="text-xl text-gray-600 font-bold">GIÂY</span>
+                    <div class="absolute inset-0 rounded-full border-[10px] border-yellow-400 shadow-inner"></div>
+                    <div class="absolute inset-0 rounded-full border-[10px] border-blue-500" style="clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 0);"></div>
+                    <div class="absolute -top-5 text-4xl drop-shadow-sm">⏱️</div>
+                    <div class="flex flex-col items-center justify-center z-10 pt-1">
+                        <span class="text-6xl text-blue-700 font-bold leading-none" id="timer-text">30</span>
+                        <span class="text-lg text-gray-600 font-bold">GIÂY</span>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white pixel-border-blue flex flex-col items-center p-4 shadow-pixel-heavy relative flex-1 justify-center">
-                <div class="pixel-label-blue text-white text-2xl px-6 py-1 absolute -top-5 whitespace-nowrap">ĐIỂM CÂU HỎI</div>
-                <div class="text-6xl text-black flex items-center gap-3 mt-4 font-bold">
+            <div class="bg-white pixel-border-blue flex flex-col items-center p-3 shadow-pixel-heavy relative flex-1 justify-center">
+                <div class="pixel-label-blue text-white text-xl px-4 py-1 absolute -top-4 whitespace-nowrap">ĐIỂM CÂU HỎI</div>
+                <div class="text-5xl text-black flex items-center gap-2 mt-3 font-bold">
                     <span class="drop-shadow-md">🪙</span>
                     <span>100</span>
                 </div>

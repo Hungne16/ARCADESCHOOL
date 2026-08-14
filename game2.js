@@ -105,19 +105,17 @@ function renderTeams() {
         const colorClass = `bg-team-${t.id}`;
         
         const cardHTML = `
-            <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
-                <div class="team-header ${colorClass}">${t.name}</div>
-                <div class="team-body">
-                    <!-- Ảnh avatar, dùng placeholder hoặc file có sẵn -->
-                    <img class="team-avatar" src="character/${t.id}.png" onerror="this.src='https://api.dicebear.com/7.x/pixel-art/svg?seed=${t.id}'" alt="Avatar">
-                    
-                    <div class="team-stats">
-                        <div class="hearts">${heartsHTML} <span class="font-bold text-black ml-1">${t.hp}/${t.maxHp}</span></div>
-                        <div class="team-score font-bold">Điểm:<br>${t.score}</div>
+            <div class="team-card ${t.hp <= 0 ? 'dead' : ''} flex flex-col h-full bg-white border-4 border-black rounded-xl overflow-hidden shadow-pixel" id="card-team-${t.id}">
+                <div class="team-header ${colorClass} text-white text-center text-2xl py-1 border-b-4 border-black font-bold text-shadow-pixel">${t.name}</div>
+                <div class="team-body flex flex-col items-center p-2 flex-1 relative">
+                    <div class="team-stats bg-blue-50 border-2 border-blue-200 rounded p-1 w-full flex flex-col items-center mb-1">
+                        <div class="hearts text-xl whitespace-nowrap">${heartsHTML}</div>
+                        <div class="team-score text-xl font-bold">🪙 ${t.score}</div>
                     </div>
-                    
-                    <!-- Icon feedback (chỉ hiện khi đúng/sai) -->
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-5xl hidden z-50 drop-shadow-md" id="feedback-${t.id}"></div>
+                    <div class="relative mt-auto">
+                        <img class="h-20 sm:h-24 object-contain drop-shadow-md transform origin-bottom" src="character/${t.id}.png" onerror="this.src='https://api.dicebear.com/7.x/pixel-art/svg?seed=${t.id}'" alt="Avatar">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-4xl hidden z-50 drop-shadow-md" id="feedback-${t.id}"></div>
+                    </div>
                 </div>
             </div>
         `;
@@ -320,7 +318,7 @@ if (roomPin && typeof db !== 'undefined') {
     if(!debugMsg) {
         debugMsg = document.createElement('div');
         debugMsg.id = 'debug-socket';
-        debugMsg.style.cssText = 'position:fixed; top:10px; left:10px; background:green; color:white; padding:5px 10px; font-size:1.5rem; z-index:9999; border-radius:5px; font-family:"VT323"';
+        debugMsg.style.cssText = 'position:fixed; top:60px; left:10px; background:green; color:white; padding:5px 10px; font-size:1.5rem; z-index:9999; border-radius:5px; font-family:"VT323"';
         document.body.appendChild(debugMsg);
     }
     debugMsg.innerText = `Phòng: ${roomPin} (Connected)`;
