@@ -15,8 +15,10 @@ const questions = [
 let currentQuestion = 0;
 let teams = [];
 
-// Khởi tạo 6 đội như yêu cầu
-const teamsCount = 6;
+// Khởi tạo các đội
+const urlParams = new URLSearchParams(window.location.search);
+const teamsCount = parseInt(urlParams.get('teams') || 6);
+
 for(let i=1; i<=teamsCount; i++) {
     teams.push({ id: i, name: `ĐỘI ${i}`, hp: 3, maxHp: 3, score: 0 });
 }
@@ -30,7 +32,6 @@ let timerInterval = null;
 // DOM Elements
 const qText = document.getElementById('question-text');
 const qCounter = document.getElementById('question-counter');
-const teamsContainer = document.getElementById('teams-container');
 const modal = document.getElementById('modal');
 const timerText = document.getElementById('timer-text');
 const answerInput = document.getElementById('answer-input');
@@ -93,10 +94,14 @@ function startTimer() {
 }
 
 function renderTeams() {
-    if(!teamsContainer) return;
-    teamsContainer.innerHTML = '';
+    const teamsLeft = document.getElementById('teams-left');
+    const teamsRight = document.getElementById('teams-right');
+    if(teamsLeft) teamsLeft.innerHTML = '';
+    if(teamsRight) teamsRight.innerHTML = '';
 
-    teams.forEach((t) => {
+    const half = Math.ceil(teams.length / 2);
+
+    teams.forEach((t, index) => {
         let heartsHTML = '';
         for(let i = 0; i < t.maxHp; i++) {
             heartsHTML += `<span class="heart ${i >= t.hp ? 'lost grayscale opacity-40' : ''}">❤️</span>`;
@@ -105,7 +110,7 @@ function renderTeams() {
         const colorClass = `bg-team-${t.id}`;
         
         const cardHTML = `
-            <div class="team-card ${t.hp <= 0 ? 'dead' : ''} flex flex-col h-full bg-white border-4 border-black rounded-xl overflow-hidden shadow-pixel" id="card-team-${t.id}">
+            <div class="team-card ${t.hp <= 0 ? 'dead' : ''} flex flex-col h-full bg-white border-4 border-black rounded-xl overflow-hidden shadow-pixel mb-4" id="card-team-${t.id}">
                 <div class="team-header ${colorClass} text-white text-center text-2xl py-1 border-b-4 border-black font-bold text-shadow-pixel">${t.name}</div>
                 <div class="team-body flex flex-col items-center p-2 flex-1 relative">
                     <div class="team-stats bg-blue-50 border-2 border-blue-200 rounded p-1 w-full flex flex-col items-center mb-1">
@@ -120,7 +125,11 @@ function renderTeams() {
             </div>
         `;
         
-        teamsContainer.innerHTML += cardHTML;
+        if (index < half) {
+            if(teamsLeft) teamsLeft.innerHTML += cardHTML;
+        } else {
+            if(teamsRight) teamsRight.innerHTML += cardHTML;
+        }
     });
 }
 
@@ -308,7 +317,6 @@ function showVictory() {
 }
 
 // SOCKET LISTENERS (Bảo lưu logic Firebase cũ nếu dùng Multiplayer)
-const urlParams = new URLSearchParams(window.location.search);
 const roomPin = urlParams.get('room');
 
 if (roomPin && typeof db !== 'undefined') {
