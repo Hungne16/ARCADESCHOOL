@@ -27,11 +27,13 @@
                 </div>
                 
                 <div class="answers-grid" id="answers-grid">
-                    <!-- Nút đáp án (A, B, C, D) -->
+                    <!-- Nút đáp án (A, B, C, D, E, F) -->
                     <div class="answer-card" id="ans-a"><span class="letter">A</span> <span class="text" id="text-a">...</span></div>
                     <div class="answer-card" id="ans-b"><span class="letter">B</span> <span class="text" id="text-b">...</span></div>
                     <div class="answer-card" id="ans-c"><span class="letter">C</span> <span class="text" id="text-c">...</span></div>
                     <div class="answer-card" id="ans-d"><span class="letter">D</span> <span class="text" id="text-d">...</span></div>
+                    <div class="answer-card" id="ans-e"><span class="letter" style="background:#8e44ad;">E</span> <span class="text" id="text-e">...</span></div>
+                    <div class="answer-card" id="ans-f"><span class="letter" style="background:#e84118;">F</span> <span class="text" id="text-f">...</span></div>
                 </div>
             </main>
 
@@ -39,26 +41,7 @@
             <aside class="teams-side right" id="teams-right"></aside>
         </div>
 
-        <!-- Teacher Panel (Chốt đáp án) - Đã chuyển sang admin.html -->
-        <footer class="teacher-panel" style="display: none;">
-            <h3 class="panel-title">GIÁO VIÊN: CHỐT ĐÁP ÁN CHO CÁC ĐỘI</h3>
-            <div class="team-answers-container">
-                <button class="team-ans-btn" id="t-ans-1" onclick="selectTeam(1)">Đội 1: <span id="t-val-1">?</span></button>
-                <button class="team-ans-btn" id="t-ans-2" onclick="selectTeam(2)">Đội 2: <span id="t-val-2">?</span></button>
-                <button class="team-ans-btn" id="t-ans-3" onclick="selectTeam(3)">Đội 3: <span id="t-val-3">?</span></button>
-                <button class="team-ans-btn" id="t-ans-4" onclick="selectTeam(4)">Đội 4: <span id="t-val-4">?</span></button>
-            </div>
-            <div class="teacher-bottom-row">
-                <div class="teacher-options" id="teacher-options">
-                    <span>Chọn:</span>
-                    <button class="opt-btn a" onclick="setAnswer('A')">A</button>
-                    <button class="opt-btn b" onclick="setAnswer('B')">B</button>
-                    <button class="opt-btn c" onclick="setAnswer('C')">C</button>
-                    <button class="opt-btn d" onclick="setAnswer('D')">D</button>
-                </div>
-                <button class="btn-reveal" id="btn-reveal" onclick="revealAnswers()" disabled>CÔNG BỐ 🚀</button>
-            </div>
-        </footer>
+
     </div>
 
     <!-- Popup Overlay (Success / Victory / GameOver) -->

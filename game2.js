@@ -91,6 +91,8 @@ function renderTeams() {
     if(teamsLeft) teamsLeft.innerHTML = '';
     if(teamsRight) teamsRight.innerHTML = '';
 
+    const half = Math.ceil(teams.length / 2);
+
     teams.forEach((t, index) => {
         let heartsHTML = '';
         for(let i = 0; i < 3; i++) {
@@ -99,15 +101,20 @@ function renderTeams() {
 
         const cardHTML = `
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
-                <h3>${t.name}</h3>
-                <div class="team-score" id="score-${t.id}">${t.score}</div>
-                <div class="hearts">
-                    ${heartsHTML}
+                <div class="team-header team-color-${t.id}">${t.name}</div>
+                <div class="team-body">
+                    <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
+                    <div class="team-info">
+                        <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
+                        <div class="hearts">
+                            ${heartsHTML}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
         
-        if (index % 2 === 0) {
+        if (index < half) {
             if(teamsLeft) teamsLeft.innerHTML += cardHTML;
         } else {
             if(teamsRight) teamsRight.innerHTML += cardHTML;
@@ -129,10 +136,19 @@ function loadQuestion() {
     const q = questions[currentQuestion];
     qCounter.innerText = `Câu: ${currentQuestion + 1}/${questions.length}`;
     qText.innerText = q.q;
-    tAnsA.innerText = q.opts.A;
-    tAnsB.innerText = q.opts.B;
-    tAnsC.innerText = q.opts.C;
-    tAnsD.innerText = q.opts.D;
+    
+    // Support options A-F
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(l => {
+        const textEl = document.getElementById(`text-${l}`);
+        const cardEl = document.getElementById(`ans-${l}`);
+        const L = l.toUpperCase();
+        if(textEl && q.opts[L]) {
+            textEl.innerText = q.opts[L];
+            cardEl.style.display = 'flex';
+        } else if (cardEl) {
+            cardEl.style.display = 'none';
+        }
+    });
 
     // Reset UI
     document.querySelectorAll('.answer-card').forEach(c => {

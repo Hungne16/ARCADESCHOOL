@@ -61,18 +61,24 @@
         
         <!-- Controls for Game 1 -->
         <div id="g1-controls" class="hidden">
-            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 1</h3>
-            <p style="font-size: 2rem;">1. Bấm chọn Đội giơ tay:</p>
+            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 1 (MẬT MÃ)</h3>
+            <p style="font-size: 2rem;">1. Bấm chọn Đội đang giơ tay:</p>
             <div class="controls" id="g1-team-btns"></div>
-            <p style="font-size: 2rem;">2. Nhập đáp án giáo viên nghe được:</p>
-            <input type="text" id="g1-answer" placeholder="Ví dụ: 42">
-            <button onclick="sendG1Answer()" style="background: #ff9800;">GỬI ĐÁP ÁN</button>
+            <p style="font-size: 2rem;">2. Chọn đáp án mà đội đó chọn:</p>
+            <div class="controls">
+                <button onclick="sendG1Ans('A')" style="background: #e21b3c; color: #fff;">A</button>
+                <button onclick="sendG1Ans('B')" style="background: #1368ce; color: #fff;">B</button>
+                <button onclick="sendG1Ans('C')" style="background: #d89e00; color: #fff;">C</button>
+                <button onclick="sendG1Ans('D')" style="background: #26890c; color: #fff;">D</button>
+                <button onclick="sendG1Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
+                <button onclick="sendG1Ans('F')" style="background: #e84118; color: #fff;">F</button>
+            </div>
             <button onclick="sendG1Next()" style="background: #ccc; margin-top: 10px;">QUA TRẠM KẾ TIẾP</button>
         </div>
 
         <!-- Controls for Game 2 -->
         <div id="g2-controls" class="hidden">
-            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 2</h3>
+            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 2 (SINH TỒN)</h3>
             <p style="font-size: 2rem;">1. Bấm chọn Đội:</p>
             <div class="controls" id="g2-team-btns"></div>
             <p style="font-size: 2rem;">2. Chốt đáp án cho đội đó:</p>
@@ -81,6 +87,8 @@
                 <button onclick="sendG2Ans('B')" style="background: #1368ce; color: #fff;">B</button>
                 <button onclick="sendG2Ans('C')" style="background: #d89e00; color: #fff;">C</button>
                 <button onclick="sendG2Ans('D')" style="background: #26890c; color: #fff;">D</button>
+                <button onclick="sendG2Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
+                <button onclick="sendG2Ans('F')" style="background: #e84118; color: #fff;">F</button>
             </div>
             <hr style="border: 1px dashed #555; margin: 20px 0;">
             <button onclick="sendG2Reveal()" style="background: #ffca28;">CÔNG BỐ KẾT QUẢ 🚀</button>
@@ -177,11 +185,16 @@
             sendAction('select_team', id);
         }
 
-        function sendG1Answer() {
+        function selectG1Team(id) {
+            activeTeam = id;
+            document.querySelectorAll('#g1-team-btns button').forEach(b => b.classList.remove('selected-team'));
+            document.getElementById('g1-btn-'+id).classList.add('selected-team');
+            sendAction('select_team', id);
+        }
+
+        function sendG1Ans(ans) {
             if(!activeTeam) return alert('Hãy chọn đội trước!');
-            const ans = document.getElementById('g1-answer').value;
             sendAction('check_answer', ans);
-            document.getElementById('g1-answer').value = '';
         }
         
         function sendG1Next() {

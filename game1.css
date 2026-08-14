@@ -132,12 +132,14 @@ body.flash-red {
 .team-card {
     flex: 1;
     background-color: var(--box-bg);
-    border: 3px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 5px;
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
     text-align: center;
     box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .team-card.dead {
@@ -146,25 +148,53 @@ body.flash-red {
     box-shadow: 0px 0px 0px;
 }
 
-.team-card h3 {
-    font-size: 1.8rem;
-    color: #29b6f6;
+.team-header {
+    color: #fff;
+    font-size: 2rem;
+    padding: 5px;
+    border-bottom: 4px solid #fff;
     text-shadow: 1px 1px 0px #000;
-    margin-bottom: 5px;
+}
+.team-color-1 { background-color: #e21b3c; }
+.team-color-2 { background-color: #1368ce; }
+.team-color-3 { background-color: #26890c; }
+.team-color-4 { background-color: #8e44ad; }
+.team-color-5 { background-color: #f39c12; }
+.team-color-6 { background-color: #e84393; }
+
+.team-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #fff;
+    flex: 1;
+}
+
+.team-avatar {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.team-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }
 
 .team-score {
-    font-size: 2.2rem;
-    color: #ffca28;
-    text-shadow: 2px 2px 0px #000;
-    margin-bottom: 5px;
+    font-size: 2rem;
+    color: #333;
+    font-weight: bold;
 }
 
 .hearts {
     display: flex;
     justify-content: center;
     gap: 3px;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
 .heart {
@@ -497,4 +527,87 @@ body.flash-red {
 .modal-content .pixel-btn:active {
     transform: translateY(4px);
     box-shadow: 0px 0px 0px #000;
+}
+/* =========================================
+   ANSWERS GRID (Game 1 Multiple Choice)
+   ========================================= */
+.answers-container {
+    background-color: #d1e8ff;
+    border: 4px dashed #64b5f6;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+.answers-header {
+    background-color: #1976d2;
+    color: #fff;
+    font-size: 2rem;
+    text-align: center;
+    padding: 5px 20px;
+    border-radius: 20px;
+    align-self: center;
+    border: 3px solid #0d47a1;
+    box-shadow: 2px 2px 0px #000;
+}
+
+.answers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.answer-card {
+    background-color: #fff;
+    border: 4px solid #000;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 4px 4px 0px #000;
+    color: #333;
+    font-size: 2.5rem;
+    transition: transform 0.2s;
+}
+
+.answer-card .letter {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 8px;
+    margin-right: 15px;
+    border: 3px solid #000;
+    box-shadow: 2px 2px 0px #000;
+}
+
+.answer-card.selected {
+    transform: scale(0.95);
+    background-color: #fff9c4;
+    border-color: #fbc02d;
+}
+
+.answer-card.correct {
+    background-color: #c8e6c9;
+    border-color: #2e7d32;
+    animation: pulse 0.5s infinite alternate;
+}
+
+.answer-card.wrong {
+    background-color: #ffcdd2;
+    border-color: #c62828;
+}
+
+.instruction-bar {
+    background-color: #1565c0;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 2rem;
+    border-radius: 8px;
+    border: 3px solid #0d47a1;
+    margin-top: 10px;
 }

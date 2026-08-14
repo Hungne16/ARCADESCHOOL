@@ -26,19 +26,22 @@ const stages = [
     {
         title: "Trạm 1: Bức Tường Số",
         desc: "Hệ thống bị khóa. Hãy tìm quy luật của dãy số sau để mở cửa:<br><br><strong>2,  6,  12,  20,  30,  ?</strong>",
-        answer: ["42"],
+        options: { a: "40", b: "42", c: "45", d: "48", e: "50", f: "55" },
+        correct: "b",
         fragment: "4"
     },
     {
         title: "Trạm 2: Cuốn Sách Cổ",
         desc: "Dữ liệu lịch sử bị hỏng. Hãy điền từ còn thiếu:<br><br><em>'Tên gọi của thủ đô Hà Nội thời nhà Lý là gì?'</em>",
-        answer: ["thăng long", "thang long"],
+        options: { a: "Hoa Lư", b: "Cổ Loa", c: "Thăng Long", d: "Đông Đô", e: "Phú Xuân", f: "Gia Định" },
+        correct: "c",
         fragment: "2"
     },
     {
         title: "Trạm 3: Mạch Điện Lõi",
         desc: "Cảnh báo nhiệt độ! Để khởi động lại hệ thống, hãy cho biết:<br><br><strong>Nước chuyển từ thể lỏng sang thể khí ở bao nhiêu độ C?</strong><br>(Chỉ nhập số)",
-        answer: ["100"],
+        options: { a: "50", b: "75", c: "90", d: "100", e: "120", f: "150" },
+        correct: "d",
         fragment: "0"
     }
 ];
@@ -104,22 +107,31 @@ function renderTeams() {
     if(teamsLeft) teamsLeft.innerHTML = '';
     if(teamsRight) teamsRight.innerHTML = '';
     
+    const half = Math.ceil(teams.length / 2);
+
     teams.forEach((t, index) => {
         let heartsHTML = '';
         for(let i = 0; i < 3; i++) {
             heartsHTML += `<span class="heart ${i >= t.hp ? 'lost' : ''}">❤️</span>`;
         }
+        
+        // Cấu trúc card mới với ảnh nhân vật
         const cardHTML = `
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
-                <h3>${t.name}</h3>
-                <div class="team-score" id="score-${t.id}">${t.score}</div>
-                <div class="hearts">
-                    ${heartsHTML}
+                <div class="team-header team-color-${t.id}">${t.name}</div>
+                <div class="team-body">
+                    <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
+                    <div class="team-info">
+                        <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
+                        <div class="hearts">
+                            ${heartsHTML}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
         
-        if (index % 2 === 0) {
+        if (index < half) {
             if(teamsLeft) teamsLeft.innerHTML += cardHTML;
         } else {
             if(teamsRight) teamsRight.innerHTML += cardHTML;
@@ -149,10 +161,20 @@ function renderStage() {
         <div style="font-size: 2rem; text-align: center; margin-top: 15px; color: #ffca28;" id="projector-status">
             Đang đợi Giáo viên điều khiển...
         </div>
-        <div class="input-group hidden" id="anim-box">
-            <input type="text" id="answer-input" class="answer-input" autocomplete="off" disabled>
-        </div>
     `;
+    
+    // Reset đáp án UI
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(l => {
+        const textEl = document.getElementById(`text-${l}`);
+        const cardEl = document.getElementById(`ans-${l}`);
+        if(textEl && stage.options[l]) {
+            textEl.innerText = stage.options[l];
+            cardEl.style.display = 'flex';
+            cardEl.className = 'answer-card'; // reset classes
+        } else if (cardEl) {
+            cardEl.style.display = 'none';
+        }
+    });
 }
 
 function selectTeam(id) {
@@ -166,21 +188,23 @@ function selectTeam(id) {
     document.getElementById('projector-status').innerHTML = `Đội ${id} đang trả lời...`;
 }
 
-function checkAnswer(userAnswer) {
+function checkAnswer(userLetter) {
     if (!currentActiveTeam) return;
 
-    const animBox = document.getElementById('anim-box');
-    const inputEl = document.getElementById('answer-input');
-    animBox.classList.remove('hidden');
-    inputEl.value = userAnswer; // Hiển thị trên máy chiếu cho học sinh thấy
-    
-    userAnswer = userAnswer.trim().toLowerCase();
+    userLetter = userLetter.trim().toLowerCase();
     const stage = stages[currentStage];
     const teamIndex = teams.findIndex(t => t.id === currentActiveTeam);
     const team = teams[teamIndex];
+    
+    // Highlight thẻ đội vừa chọn đáp án
+    const cardEl = document.getElementById(`ans-${userLetter}`);
+    if(cardEl) {
+        cardEl.classList.add('selected');
+    }
 
-    if (stage.answer.includes(userAnswer)) {
+    if (userLetter === stage.correct) {
         playSound('correct');
+        if(cardEl) cardEl.classList.add('correct');
         
         team.score += 100;
         renderTeams();
@@ -192,10 +216,11 @@ function checkAnswer(userAnswer) {
         document.getElementById('projector-status').innerHTML = ``;
         modalTitle.innerText = "THÀNH CÔNG!";
         modalTitle.style.color = "#00e676";
-        modalText.innerText = `[${team.name}] trả lời đúng!\nĐã thu thập mảnh ghép: ${stage.fragment}`;
+        modalText.innerText = `[${team.name}] chọn ${userLetter.toUpperCase()} chính xác!\nĐã thu thập mảnh ghép: ${stage.fragment}`;
         modal.classList.remove('hidden');
     } else {
         playSound('wrong');
+        if(cardEl) cardEl.classList.add('wrong');
         
         team.hp--;
         timeRemaining -= 30; 
@@ -207,11 +232,13 @@ function checkAnswer(userAnswer) {
         void document.body.offsetWidth;
         document.body.classList.add('flash-red');
 
-        inputEl.classList.remove('shake');
-        void inputEl.offsetWidth; 
-        inputEl.classList.add('shake');
+        if(cardEl) {
+            cardEl.classList.remove('shake');
+            void cardEl.offsetWidth; 
+            cardEl.classList.add('shake');
+        }
         
-        document.getElementById('projector-status').innerHTML = `Sai rồi! Lượt của Đội khác...`;
+        document.getElementById('projector-status').innerHTML = `Đội ${team.name} chọn sai! Mất 1 mạng và 30s. Lượt của đội khác...`;
         
         document.getElementById(`card-team-${currentActiveTeam}`).style.borderColor = '#fff';
         currentActiveTeam = null;
