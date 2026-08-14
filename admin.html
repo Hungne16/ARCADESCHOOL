@@ -131,6 +131,8 @@
                         st.classList.remove('blink');
                     }
                 });
+            }).catch((error) => {
+                alert("Lỗi tạo phòng (Firebase): " + error.message + "\n\nHãy kiểm tra xem anh đã tạo Realtime Database và chọn 'Start in test mode' chưa nhé!");
             });
         }
         
