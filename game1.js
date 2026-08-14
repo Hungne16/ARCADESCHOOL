@@ -141,12 +141,12 @@ function renderStage() {
     }
 
     const stage = stages[currentStage];
-    // Hiển thị giao diện dành cho máy chiếu (không cần input box, mọi thứ qua điện thoại)
+    // Hiển thị giao diện dành cho máy chiếu
     puzzleContainer.innerHTML = `
         <h2 class="station-title">${stage.title}</h2>
         <p class="puzzle-desc">${stage.desc}</p>
         
-        <div style="font-size: 3rem; text-align: center; margin-top: 30px; color: #ffca28;" id="projector-status">
+        <div style="font-size: 2rem; text-align: center; margin-top: 15px; color: #ffca28;" id="projector-status">
             Đang đợi Giáo viên điều khiển...
         </div>
         <div class="input-group hidden" id="anim-box">
