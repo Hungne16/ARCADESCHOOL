@@ -103,7 +103,10 @@ function renderTeams() {
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
                 <div class="team-header team-color-${t.id}">${t.name}</div>
                 <div class="team-body">
-                    <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
+                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}">
+                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
+                        <div class="feedback-icon" id="feedback-${t.id}"></div>
+                    </div>
                     <div class="team-info">
                         <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
                         <div class="hearts">
@@ -212,39 +215,49 @@ function revealAnswers() {
     const correctAns = q.correct;
 
     // Làm mờ các ô sai, nhấp nháy ô đúng
-    ['a', 'b', 'c', 'd'].forEach(letter => {
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(letter => {
         const card = document.getElementById(`ans-${letter}`);
-        if (letter.toUpperCase() === correctAns) {
-            card.classList.add('correct');
-        } else {
-            card.classList.add('dimmed');
+        if(card) {
+            if (letter.toUpperCase() === correctAns) {
+                card.classList.add('correct');
+            } else {
+                card.classList.add('dimmed');
+            }
         }
     });
-
-    let correctCount = 0;
-    let wrongCount = 0;
+    
+    let someoneWrong = false;
+    let someoneCorrect = false;
 
     teams.forEach(t => {
-        if (t.hp <= 0) return; 
-
-        const ans = teamAnswers[t.id];
-        const cardUI = document.getElementById(`card-team-${t.id}`);
+        if (t.hp <= 0) return;
         
-        // Hiện đáp án đội chọn ngay trên card
-        cardUI.innerHTML += `<div style="font-size: 3rem; color: #fff; margin-top: 10px; font-weight:bold;">Chốt: ${ans || '?'}</div>`;
+        const avatarWrapper = document.getElementById(`avatar-wrapper-${t.id}`);
+        const feedbackIcon = document.getElementById(`feedback-${t.id}`);
+        const cardUI = document.getElementById(`card-team-${t.id}`);
 
-        if (ans === correctAns) {
+        if (teamAnswers[t.id] === correctAns) {
             t.score += 100;
-            correctCount++;
-            cardUI.classList.remove('spring-bounce');
-            void cardUI.offsetWidth;
-            cardUI.classList.add('spring-bounce');
+            someoneCorrect = true;
+            if (cardUI) cardUI.classList.add('spring-bounce');
+            if (avatarWrapper && feedbackIcon) {
+                feedbackIcon.innerText = '✔️';
+                avatarWrapper.classList.add('pop-up', 'correct');
+                setTimeout(() => avatarWrapper.classList.remove('pop-up', 'correct'), 3000);
+            }
         } else {
             t.hp--;
-            wrongCount++;
-            cardUI.classList.remove('shake');
-            void cardUI.offsetWidth;
-            cardUI.classList.add('shake');
+            someoneWrong = true;
+            if (cardUI) {
+                cardUI.classList.remove('shake');
+                void cardUI.offsetWidth;
+                cardUI.classList.add('shake');
+            }
+            if (avatarWrapper && feedbackIcon) {
+                feedbackIcon.innerText = '❌';
+                avatarWrapper.classList.add('pop-up', 'wrong');
+                setTimeout(() => avatarWrapper.classList.remove('pop-up', 'wrong'), 3000);
+            }
         }
     });
 

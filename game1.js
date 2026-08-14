@@ -120,7 +120,10 @@ function renderTeams() {
             <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
                 <div class="team-header team-color-${t.id}">${t.name}</div>
                 <div class="team-body">
-                    <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
+                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}">
+                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
+                        <div class="feedback-icon" id="feedback-${t.id}"></div>
+                    </div>
                     <div class="team-info">
                         <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
                         <div class="hearts">
@@ -201,10 +204,21 @@ function checkAnswer(userLetter) {
     if(cardEl) {
         cardEl.classList.add('selected');
     }
+    
+    const avatarWrapper = document.getElementById(`avatar-wrapper-${currentActiveTeam}`);
+    const feedbackIcon = document.getElementById(`feedback-${currentActiveTeam}`);
 
     if (userLetter === stage.correct) {
         playSound('correct');
         if(cardEl) cardEl.classList.add('correct');
+        
+        if (avatarWrapper && feedbackIcon) {
+            feedbackIcon.innerText = '✔️';
+            avatarWrapper.classList.add('pop-up', 'correct');
+            setTimeout(() => {
+                avatarWrapper.classList.remove('pop-up', 'correct');
+            }, 2000);
+        }
         
         team.score += 100;
         renderTeams();
@@ -221,6 +235,14 @@ function checkAnswer(userLetter) {
     } else {
         playSound('wrong');
         if(cardEl) cardEl.classList.add('wrong');
+        
+        if (avatarWrapper && feedbackIcon) {
+            feedbackIcon.innerText = '❌';
+            avatarWrapper.classList.add('pop-up', 'wrong');
+            setTimeout(() => {
+                avatarWrapper.classList.remove('pop-up', 'wrong');
+            }, 2000);
+        }
         
         team.hp--;
         timeRemaining -= 30; 

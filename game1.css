@@ -139,7 +139,9 @@ body.flash-red {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* Loại bỏ overflow: hidden để avatar nổi ra ngoài */
+    position: relative;
+    z-index: 1;
 }
 
 .team-card.dead {
@@ -154,6 +156,8 @@ body.flash-red {
     padding: 5px;
     border-bottom: 4px solid #fff;
     text-shadow: 1px 1px 0px #000;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 .team-color-1 { background-color: #e21b3c; }
 .team-color-2 { background-color: #1368ce; }
@@ -164,17 +168,54 @@ body.flash-red {
 
 .team-body {
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* Cho nhân vật đứng dưới đáy */
     justify-content: space-around;
-    padding: 10px;
+    padding: 10px 10px 0 10px; /* Bỏ padding dưới */
     background-color: #fff;
     flex: 1;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.avatar-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .team-avatar {
-    width: 60px;
-    height: 60px;
+    height: 110px;
+    width: auto;
     object-fit: contain;
+    transform-origin: bottom center;
+    margin-bottom: -5px; /* Ép nhẹ xuống đáy */
+}
+
+.feedback-icon {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    font-size: 4.5rem;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.avatar-wrapper.pop-up {
+    transform: translateY(-15px) scale(1.15);
+    z-index: 99;
+}
+
+.avatar-wrapper.pop-up.correct .feedback-icon {
+    transform: translateX(-50%) scale(1);
+    color: #00e676;
+}
+
+.avatar-wrapper.pop-up.wrong .feedback-icon {
+    transform: translateX(-50%) scale(1);
+    color: #ff5252;
 }
 
 .team-info {
@@ -182,6 +223,7 @@ body.flash-red {
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    margin-bottom: 15px; /* Bù lại khoảng trống do đẩy avatar xuống đáy */
 }
 
 .team-score {
