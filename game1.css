@@ -46,16 +46,11 @@ body.flash-red {
 }
 
 .game-container {
-    width: 98%;
-    max-width: 1400px;
+    width: 98vw;
+    max-width: 1600px;
     height: 95vh;
-    display: grid;
-    grid-template-areas: 
-        "header header"
-        "teams terminal"
-        "teams inventory";
-    grid-template-columns: 240px 1fr;
-    grid-template-rows: auto 1fr auto;
+    display: flex;
+    flex-direction: column;
     gap: 15px;
     z-index: 5;
 }
@@ -111,12 +106,27 @@ body.flash-red {
 /* =========================================
    TEAMS DASHBOARD
    ========================================= */
-.teams-dashboard {
-    grid-area: teams;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    align-content: flex-start;
+.main-split {
+    display: flex;
+    flex-grow: 1;
+    gap: 20px;
+    min-height: 0;
+}
+
+.teams-side {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.center-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0;
 }
 
 .team-card {
