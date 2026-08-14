@@ -99,12 +99,33 @@
             
             myPin = Math.floor(1000 + Math.random() * 9000).toString();
             
+            // Hiển thị trạng thái đang xử lý để không bị lầm tưởng là đơ
+            const btn = document.querySelector('button[onclick="createRoom()"]');
+            const originalText = btn.innerText;
+            btn.innerText = "ĐANG KẾT NỐI...";
+            btn.disabled = true;
+
+            let isSuccess = false;
+            
+            // Timeout 5 giây nếu Firebase treo
+            setTimeout(() => {
+                if(!isSuccess) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    alert("Kết nối Firebase bị treo (Timeout)! Nguyên nhân có thể do sai Database URL (Mặc định đang dùng Singapore). Anh vào Firebase -> Realtime Database -> Copy đường link trên cùng gửi cho em nhé!");
+                }
+            }, 5000);
+
             db.ref('rooms/' + myPin).set({
                 gameId: gameId,
                 teamsCount: teamsCount,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
                 playerJoined: false
             }).then(() => {
+                isSuccess = true;
+                btn.innerText = originalText;
+                btn.disabled = false;
+                
                 document.getElementById('create-view').classList.add('hidden');
                 document.getElementById('control-view').classList.remove('hidden');
                 document.getElementById('pin-display').innerText = myPin;

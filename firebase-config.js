@@ -5,8 +5,8 @@ const firebaseConfig = {
     authDomain: "arcadeschool.firebaseapp.com",
     // Nếu anh chọn khu vực Singapore, databaseURL có thể là:
     // "https://arcadeschool-default-rtdb.asia-southeast1.firebasedatabase.app"
-    // Nếu chọn US (mặc định) thì dùng:
-    databaseURL: "https://arcadeschool-default-rtdb.firebaseio.com",
+    // Rất có thể anh đã chọn Singapore nên URL mặc định US bị sai khiến web treo
+    databaseURL: "https://arcadeschool-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "arcadeschool",
     storageBucket: "arcadeschool.firebasestorage.app",
     messagingSenderId: "440521029838",
