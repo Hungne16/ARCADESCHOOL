@@ -170,11 +170,11 @@ function setAnswer(teamId, letter) {
         card.style.transform = 'scale(0.95)'; // Indicate locked
         const badge = document.getElementById(`badge-${teamId}`);
         if(badge) {
-            badge.innerText = 'ĐÃ CHỐT';
+            badge.innerText = `ĐÃ CHỐT: ${letter}`;
             badge.style.background = '#00ffcc';
             badge.style.animation = 'none';
         } else {
-            card.innerHTML += `<div id="badge-${teamId}" style="background: #00ffcc; color:#000; padding: 5px 15px; border-radius: 5px; font-weight:bold; font-size: 2rem; margin-top: 10px; text-transform: uppercase;">ĐÃ CHỐT</div>`;
+            card.innerHTML += `<div id="badge-${teamId}" style="background: #00ffcc; color:#000; padding: 5px 15px; border-radius: 5px; font-weight:bold; font-size: 2rem; margin-top: 10px; text-transform: uppercase;">ĐÃ CHỐT: ${letter}</div>`;
         }
     }
 }
