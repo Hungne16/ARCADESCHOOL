@@ -169,8 +169,8 @@ body.flash-red {
 .team-body {
     display: flex;
     align-items: flex-end; /* Cho nhân vật đứng dưới đáy */
-    justify-content: space-around;
-    padding: 10px 10px 0 10px; /* Bỏ padding dưới */
+    justify-content: flex-start; /* Gom về bên trái */
+    padding: 0 10px 0 0; /* Bỏ padding dưới và trái để nhân vật sát mép */
     background-color: #fff;
     flex: 1;
     border-bottom-left-radius: 8px;
@@ -182,14 +182,17 @@ body.flash-red {
     display: flex;
     align-items: flex-end;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    flex-shrink: 0;
+    margin-right: 10px;
 }
 
 .team-avatar {
-    height: 110px;
+    height: 150px; /* To cực đại */
     width: auto;
     object-fit: contain;
     transform-origin: bottom center;
     margin-bottom: -5px; /* Ép nhẹ xuống đáy */
+    margin-left: -5px; /* Hơi tràn ra viền trái */
 }
 
 .feedback-icon {
@@ -221,9 +224,11 @@ body.flash-red {
 .team-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 15px; /* Bù lại khoảng trống do đẩy avatar xuống đáy */
+    align-items: center; /* Căn giữa thông tin */
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex: 1; /* Lấp đầy khoảng trống còn lại */
 }
 
 .team-score {
