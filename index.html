@@ -4,7 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arcade Học Đường</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'vt323': ['VT323', 'monospace'] }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,33 +35,46 @@
         </div>
     </div>
 
+    <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('arcade_school_bg.jpg'); filter: brightness(0.85);"></div>
+
     <!-- Lớp phủ tạo hiệu ứng màn hình tivi lồi CRT cũ -->
-    <div class="crt-overlay"></div>
+    <div class="crt-overlay z-10"></div>
     
-    <div class="screen">
-        <div class="school-info">
-            <h2>TH&THCS SUỐI BU</h2>
-            <h3>Giáo Viên Hoàng Thị Hồng</h3>
+    <div class="bg-white pixel-border-blue relative flex flex-col items-center p-8 z-20 shadow-pixel-heavy text-black max-w-2xl w-full mx-4 mt-8">
+        <div class="absolute -top-12 z-20 text-6xl drop-shadow-md animate-bounce">🕹️</div>
+
+        <div class="school-info text-center mb-6 border-b-4 border-dashed border-gray-300 w-full pb-4">
+            <h2 class="text-4xl text-pink-600 font-bold drop-shadow-[2px_2px_0px_rgba(0,0,0,0.5)]">TH&THCS SUỐI BU</h2>
+            <h3 class="text-2xl text-gray-700 font-bold mt-2">Giáo Viên Hoàng Thị Hồng</h3>
         </div>
-        <header>
-            <h1 class="glitch" data-text="ARCADE HỌC ĐƯỜNG">ARCADE HỌC ĐƯỜNG</h1>
+        
+        <header class="mb-8 relative flex justify-center w-full">
+            <div class="pixel-banner-blue text-5xl text-white px-10 py-3 shadow-pixel animate-pulse">ARCADE HỌC ĐƯỜNG</div>
         </header>
 
-        <main class="join-room" style="text-align: center; margin-top: 20px;">
-            <h2 style="color: #ffca28; font-size: 3rem; margin-bottom: 15px;">NHẬP MÃ PHÒNG ĐỂ KẾT NỐI</h2>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <main class="join-room flex flex-col items-center w-full">
+            <h2 class="text-3xl text-blue-700 font-bold mb-4 drop-shadow-sm">NHẬP MÃ PHÒNG ĐỂ KẾT NỐI</h2>
+            
+            <div class="flex flex-col items-center gap-4 relative">
+                <!-- Decorative elements -->
+                <div class="absolute -left-16 top-2 text-4xl animate-bounce" style="animation-delay: 0.2s">🪙</div>
+                <div class="absolute -right-16 top-2 text-4xl animate-bounce" style="animation-delay: 0.5s">🪙</div>
+                <div class="absolute -left-12 bottom-2 text-3xl animate-pulse">⭐</div>
+                <div class="absolute -right-12 bottom-2 text-3xl animate-pulse">⭐</div>
+
                 <input type="text" id="pin-input" placeholder="MÃ 4 SỐ" maxlength="4" autocomplete="off" 
-                       style="font-size: 5rem; text-align: center; font-family: 'VT323', monospace; border: 4px solid #fff; background: #000; color: #00ffcc; padding: 10px; width: 250px; text-transform: uppercase;">
-                <button onclick="joinRoom()" style="width: 250px; background-color: #00e676; color: #000; font-family: 'VT323', monospace; font-size: 3rem; font-weight: bold; padding: 10px; border: 4px solid #000; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0px #000;">
+                       class="pixel-input text-5xl text-center p-4 w-64 uppercase focus:bg-blue-50 focus:outline-none">
+                
+                <button onclick="joinRoom()" class="pixel-btn-yellow text-black text-4xl px-12 py-4 mt-2 w-64 hover:brightness-110">
                     KẾT NỐI
                 </button>
-                <p id="join-error" style="color: #ff5252; font-size: 2rem; display: none; margin: 0;">Mã phòng không tồn tại!</p>
+                <p id="join-error" class="text-red-500 text-2xl font-bold mt-2 hidden">Mã phòng không tồn tại!</p>
             </div>
         </main>
 
-        <footer style="margin-top: 50px; text-align: center;">
-            <p class="blink" style="margin-bottom: 15px;">AWAITING SIGNAL...</p>
-            <a href="admin.html" style="color: #888; text-decoration: underline; font-size: 2rem;">[ Quản trị viên (Giáo viên) Tạo Phòng ]</a>
+        <footer class="mt-10 flex flex-col items-center">
+            <p class="blink text-gray-500 text-xl font-bold mb-4">AWAITING SIGNAL...</p>
+            <a href="admin.html" class="text-gray-400 hover:text-blue-500 text-xl underline">[ Quản trị viên (Giáo viên) Tạo Phòng ]</a>
         </footer>
     </div>
     
@@ -85,7 +110,7 @@
                     setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
                     const err = document.getElementById('join-error');
                     err.innerText = 'Mã phòng không tồn tại!';
-                    err.style.display = 'block';
+                    err.classList.remove('hidden');
                 }
             });
         }

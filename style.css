@@ -45,59 +45,7 @@ body {
     max-width: 800px;
 }
 
-.school-info {
-    margin-bottom: 30px;
-    border-bottom: 2px dashed #444;
-    padding-bottom: 20px;
-}
 
-.school-info h2 {
-    font-size: 3rem;
-    color: #ff00ff;
-    text-shadow: 2px 2px 0px #000, 4px 4px 0px var(--secondary-color);
-    margin-bottom: 10px;
-    letter-spacing: 2px;
-}
-
-.school-info h3 {
-    font-size: 1.8rem;
-    color: #fff;
-    opacity: 0.9;
-}
-
-header {
-    margin-bottom: 60px;
-}
-
-h1 {
-    font-size: 4.5rem;
-    color: var(--secondary-color);
-    text-shadow: 4px 4px 0px var(--primary-color);
-    margin-bottom: 20px;
-    position: relative;
-    display: inline-block;
-    line-height: 1.3;
-}
-
-/* Hiệu ứng rung giật (glitch) nhẹ khi di chuột vào tiêu đề */
-h1:hover {
-    animation: glitch 0.3s infinite;
-}
-
-@keyframes glitch {
-    0% { transform: translate(0) }
-    20% { transform: translate(-2px, 2px) }
-    40% { transform: translate(-2px, -2px) }
-    60% { transform: translate(2px, 2px) }
-    80% { transform: translate(2px, -2px) }
-    100% { transform: translate(0) }
-}
-
-.subtitle {
-    color: #ffd700;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
-}
 
 .game-selection {
     display: flex;
@@ -292,4 +240,72 @@ footer {
     font-size: 1.8rem;
     color: #fff;
     text-shadow: 2px 2px 0px #000;
+}
+
+/* =========================================
+   PIXEL UI UTILITIES (Ported from Game 2)
+   ========================================= */
+.shadow-pixel {
+    box-shadow: 4px 4px 0px #000;
+}
+
+.shadow-pixel-heavy {
+    box-shadow: 8px 8px 0px #000;
+}
+
+.text-shadow-pixel {
+    text-shadow: 3px 3px 0px #000;
+}
+
+.pixel-border-blue {
+    border: 6px solid #1e88e5;
+    outline: 4px solid #000;
+    outline-offset: -10px;
+    box-shadow: inset 0 0 0 4px #000, 8px 8px 0px #000;
+}
+
+.pixel-banner-blue {
+    background-color: #29b6f6;
+    border: 4px solid #000;
+    position: relative;
+    font-weight: bold;
+}
+.pixel-banner-blue::before, .pixel-banner-blue::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px; 
+    height: 80%;
+    background-color: #0288d1;
+    border: 4px solid #000;
+    z-index: -1;
+}
+.pixel-banner-blue::before { left: -15px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30% 50%); }
+.pixel-banner-blue::after { right: -15px; clip-path: polygon(0 0, 100% 0, 70% 50%, 100% 100%, 0 100%); }
+
+.pixel-label-blue {
+    background-color: #1e88e5;
+    border: 4px solid #000;
+    box-shadow: 4px 4px 0px #000;
+    font-weight: bold;
+}
+
+.pixel-input {
+    border: 4px solid #000;
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.1);
+    font-family: 'VT323', monospace;
+    font-weight: bold;
+}
+
+.pixel-btn-yellow {
+    background-color: #ffca28;
+    border: 4px solid #000;
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2), 4px 4px 0px #000;
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-weight: bold;
+}
+.pixel-btn-yellow:active {
+    transform: translate(4px, 4px);
+    box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2), 0px 0px 0px #000;
 }
