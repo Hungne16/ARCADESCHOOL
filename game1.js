@@ -2,10 +2,23 @@ const urlParams = new URLSearchParams(window.location.search);
 const roomPin = urlParams.get('room');
 const teamsCount = parseInt(urlParams.get('teams') || 4);
 
-const socket = typeof io !== 'undefined' ? io() : null;
-if(socket && roomPin) {
-    socket.on('connect', () => {
-        socket.emit('join_room', roomPin);
+if(roomPin) {
+    let lastProcessedAction = null;
+    db.ref('rooms/' + roomPin + '/actions').on('child_added', (snap) => {
+        const data = snap.val();
+        // Bỏ qua các sự kiện quá cũ (đề phòng firebase load lại lịch sử)
+        if (Date.now() - data.ts > 10000) return;
+        if(data.ts === lastProcessedAction) return;
+        lastProcessedAction = data.ts;
+        
+        const { action, payload } = data;
+        if (action === 'select_team') {
+            selectTeam(payload);
+        } else if (action === 'check_answer') {
+            checkAnswer(payload);
+        } else if (action === 'next_stage') {
+            nextStage();
+        }
     });
 }
 
@@ -235,23 +248,9 @@ function startTimer() {
         }
 
         if (timeRemaining <= 0) {
-            gameOver();
+            updateStatusText("SẴN SÀNG GIẢI MÃ!");
         }
     }, 1000);
-}
-
-// Socket LISTENERS
-if(socket) {
-    socket.on('game_action', (data) => {
-        const { action, payload } = data;
-        if (action === 'select_team') {
-            selectTeam(payload);
-        } else if (action === 'check_answer') {
-            checkAnswer(payload);
-        } else if (action === 'next_stage') {
-            nextStage();
-        }
-    });
 }
 
 window.onload = initGame;

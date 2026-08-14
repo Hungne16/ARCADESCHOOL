@@ -53,11 +53,10 @@
         </footer>
     </div>
     
-    <!-- Load Socket.io Client -->
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        const socket = io();
-
         function joinRoom() {
             const pin = document.getElementById('pin-input').value.trim();
             if(pin.length !== 4) return;
@@ -67,28 +66,29 @@
             document.getElementById('loading-screen').style.display = 'flex';
             setTimeout(() => { document.getElementById('loading-screen').style.opacity = '1'; }, 10);
             
-            socket.emit('join_room', pin);
-        }
-
-        socket.on('room_joined', (room) => {
-            document.getElementById('loading-text').innerText = "KẾT NỐI THÀNH CÔNG!";
-            setTimeout(() => {
-                // Chuyển trang sang Game tương ứng và truyền PIN vào URL
-                if (room.gameId == 1) {
-                    window.location.href = `game1.html?room=${room.pin}&teams=${room.teamsCount}`;
+            db.ref('rooms/' + pin).once('value').then((snap) => {
+                if (snap.exists()) {
+                    const room = snap.val();
+                    db.ref('rooms/' + pin + '/playerJoined').set(true);
+                    
+                    document.getElementById('loading-text').innerText = "KẾT NỐI THÀNH CÔNG!";
+                    setTimeout(() => {
+                        // Chuyển trang sang Game tương ứng và truyền PIN vào URL
+                        if (room.gameId == 1) {
+                            window.location.href = `game1.html?room=${pin}&teams=${room.teamsCount}`;
+                        } else {
+                            window.location.href = `game2.html?room=${pin}&teams=${room.teamsCount}`;
+                        }
+                    }, 1000);
                 } else {
-                    window.location.href = `game2.html?room=${room.pin}&teams=${room.teamsCount}`;
+                    document.getElementById('loading-screen').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
+                    const err = document.getElementById('join-error');
+                    err.innerText = 'Mã phòng không tồn tại!';
+                    err.style.display = 'block';
                 }
-            }, 1000);
-        });
-
-        socket.on('join_error', (msg) => {
-            document.getElementById('loading-screen').style.opacity = '0';
-            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 300);
-            const err = document.getElementById('join-error');
-            err.innerText = msg;
-            err.style.display = 'block';
-        });
+            });
+        }
     </script>
 </body>
 </html>

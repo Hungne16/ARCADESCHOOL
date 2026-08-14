@@ -87,41 +87,61 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
     <script>
-        const socket = io();
         let myPin = null;
 
         function createRoom() {
             const gameId = document.getElementById('game-select').value;
             const teamsCount = document.getElementById('teams-select').value;
-            socket.emit('create_room', { gameId, teamsCount });
-            socket.on('room_created', (data) => {
-                myPin = typeof data === 'string' ? data : data.pin;
+            
+            myPin = Math.floor(1000 + Math.random() * 9000).toString();
+            
+            db.ref('rooms/' + myPin).set({
+                gameId: gameId,
+                teamsCount: teamsCount,
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                playerJoined: false
+            }).then(() => {
                 document.getElementById('create-view').classList.add('hidden');
                 document.getElementById('control-view').classList.remove('hidden');
                 document.getElementById('pin-display').innerText = myPin;
 
                 let btnsHTML = '';
-                for(let i=1; i<=data.teamsCount; i++) {
+                for(let i=1; i<=teamsCount; i++) {
                     btnsHTML += `<button id="btn-team-${i}" onclick="selectTeam(${i})">Đội ${i}</button>`;
                 }
 
-                if (data.gameId == 1) {
+                if (gameId == 1) {
                     document.getElementById('g1-controls').classList.remove('hidden');
                     document.getElementById('g1-team-btns').innerHTML = btnsHTML;
                 } else {
                     document.getElementById('g2-controls').classList.remove('hidden');
                     document.getElementById('g2-team-btns').innerHTML = btnsHTML;
                 }
+                
+                // Lắng nghe khi máy chiếu kết nối
+                db.ref('rooms/' + myPin + '/playerJoined').on('value', (snap) => {
+                    if (snap.val() === true) {
+                        const st = document.getElementById('player-status');
+                        st.innerText = "✅ Máy chiếu đã kết nối! Bắt đầu chơi.";
+                        st.style.color = "#00e676";
+                        st.classList.remove('blink');
+                    }
+                });
             });
         }
-
-        socket.on('player_joined', (id) => {
-            const st = document.getElementById('player-status');
-            st.innerText = "✅ Máy chiếu đã kết nối! Bắt đầu chơi.";
-            st.style.color = "#00e676";
-        });
+        
+        function sendAction(actionName, payloadData) {
+            if(!myPin) return;
+            db.ref('rooms/' + myPin + '/actions').push({
+                action: actionName,
+                payload: payloadData,
+                ts: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
 
         let activeTeam = null;
         function selectTeam(id) {
@@ -130,23 +150,23 @@
             const btn = document.getElementById(`btn-team-${id}`);
             if(btn) btn.classList.add('selected-team');
 
-            socket.emit('admin_action', { pin: myPin, action: 'select_team', payload: id });
+            sendAction('select_team', id);
         }
 
         function sendG1Answer() {
             if(!activeTeam) return alert('Hãy chọn đội trước!');
             const ans = document.getElementById('g1-answer').value;
-            socket.emit('admin_action', { pin: myPin, action: 'check_answer', payload: ans });
+            sendAction('check_answer', ans);
             document.getElementById('g1-answer').value = '';
         }
         
         function sendG1Next() {
-            socket.emit('admin_action', { pin: myPin, action: 'next_stage', payload: null });
+            sendAction('next_stage', null);
         }
 
         function sendG2Ans(ans) {
             if(!activeTeam) return alert('Hãy chọn đội trước!');
-            socket.emit('admin_action', { pin: myPin, action: 'set_answer', payload: { team: activeTeam, answer: ans } });
+            sendAction('set_answer', { team: activeTeam, answer: ans });
             
             // Xóa style team sau khi chọn
             document.querySelectorAll('[id^="btn-team-"]').forEach(b => b.classList.remove('selected-team'));
@@ -154,11 +174,11 @@
         }
 
         function sendG2Reveal() {
-            socket.emit('admin_action', { pin: myPin, action: 'reveal', payload: null });
+            sendAction('reveal', null);
         }
 
         function sendG2Next() {
-            socket.emit('admin_action', { pin: myPin, action: 'next_question', payload: null });
+            sendAction('next_question', null);
         }
     </script>
 </body>
