@@ -19,25 +19,25 @@
             justify-content: flex-start;
             overflow-y: auto;
         }
-        .admin-box { background: #222; border: 4px solid #fff; padding: 20px; margin: 20px auto; max-width: 500px; border-radius: 10px; }
-        select, input { font-family: 'VT323', monospace; font-size: 2.5rem; padding: 10px; margin: 10px 0; width: 100%; border: 3px solid #ccc; background: #000; color: #00ffcc;}
-        button { font-family: 'VT323', monospace; font-size: 2.5rem; padding: 15px; margin: 10px 0; width: 100%; background: #00e676; cursor: pointer; border: 4px solid #000; font-weight: bold; border-radius: 8px;}
+        .admin-box { background: #222; border: 4px solid #fff; padding: 15px; margin: 10px auto; max-width: 500px; border-radius: 10px; }
+        select, input { font-family: 'VT323', monospace; font-size: 2rem; padding: 8px; margin: 5px 0; width: 100%; border: 3px solid #ccc; background: #000; color: #00ffcc;}
+        button { font-family: 'VT323', monospace; font-size: 2rem; padding: 10px; margin: 5px 0; width: 100%; background: #00e676; cursor: pointer; border: 4px solid #000; font-weight: bold; border-radius: 8px;}
         button:active { transform: scale(0.95); }
         .hidden { display: none !important; }
-        .controls { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-bottom: 20px; }
-        .controls button { margin: 0; }
-        h1 { font-size: 4rem; color: #ffca28; margin-bottom: 10px;}
-        h2 { font-size: 3rem; margin-bottom: 20px;}
+        .controls { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; margin-bottom: 15px; }
+        .controls button { margin: 0; padding: 8px; }
+        h1 { font-size: 3rem; color: #ffca28; margin-bottom: 5px; margin-top: 5px;}
+        h2 { font-size: 2.2rem; margin-bottom: 10px; margin-top: 0;}
         .selected-team { border-color: #00ffcc; box-shadow: 0 0 15px #00ffcc; }
         
         /* CSS cho Tabs */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 800px; }
-        .tab-btn { flex: 1; font-size: 2.5rem; background: #333; color: #aaa; border: 4px solid #555; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 10px; width: 100%; max-width: 800px; }
+        .tab-btn { flex: 1; font-size: 2rem; background: #333; color: #aaa; border: 4px solid #555; padding: 8px;}
         .tab-btn.active { background: #00ffcc; color: #000; border-color: #000; box-shadow: 4px 4px 0 #000; }
         .tab-content { width: 100%; max-width: 800px; }
         
         /* CSS cho Question Editor */
-        .q-list { text-align: left; background: #222; padding: 15px; border-radius: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 2px solid #555;}
+        .q-list { text-align: left; background: #222; padding: 15px; border-radius: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 10px; border: 2px solid #555;}
         .q-item { background: #333; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 2px solid #444;}
         .q-item-header { display: flex; justify-content: space-between; align-items: center; }
         .q-item-title { font-size: 2rem; color: #ffca28; }
@@ -46,14 +46,15 @@
         .q-correct { border: 2px solid #00e676; color: #00e676;}
         
         .editor-form { background: #333; padding: 20px; border-radius: 8px; border: 4px solid #ffca28; margin-top: 20px; text-align: left;}
-        .editor-form label { font-size: 2rem; color: #ccc; }
-        .editor-form input { font-size: 2rem; padding: 8px; margin-bottom: 15px;}
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .editor-form input { font-size: 1.8rem; padding: 5px; margin-bottom: 10px;}
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
         /* Auth UI CSS */
-        .auth-container { max-width: 400px; margin: 50px auto; background: #222; padding: 30px; border-radius: 10px; border: 4px solid #00ffcc; text-align: center; }
-        .auth-container input { text-align: center; font-size: 3rem; font-weight: bold; }
-        .auth-container p { font-size: 2rem; margin-bottom: 15px; color: #ccc; }
+        .auth-container { max-width: 400px; margin: 20px auto; background: #222; padding: 20px; border-radius: 10px; border: 4px solid #00ffcc; text-align: center; }
+        .auth-container h2 { font-size: 2.5rem !important; margin-bottom: 10px; }
+        .auth-container input { text-align: center; font-size: 2.5rem; font-weight: bold; }
+        .auth-container p { font-size: 1.5rem; margin-bottom: 10px; color: #ccc; }
+        #auth-id-display { font-size: 4rem; color: #ffca28; margin: 5px 0; display: block; }
         #auth-content { width: 100%; display: flex; flex-direction: column; align-items: center; }
         #app-content { width: 100%; display: flex; flex-direction: column; align-items: center; }
     </style>
@@ -63,22 +64,22 @@
     
     <div id="auth-content">
         <div class="auth-container" id="login-view">
-            <h2 style="color: #00ffcc; font-size: 3.5rem;">ĐĂNG NHẬP</h2>
+            <h2 style="color: #00ffcc;">ĐĂNG NHẬP</h2>
             <p>Vui lòng nhập Mã ID của bạn</p>
             <input type="text" id="login-id" placeholder="Mã 4 số" maxlength="4">
             <input type="password" id="login-pass" placeholder="Mật khẩu">
             <button onclick="login()" style="background: #00e676;">ĐĂNG NHẬP</button>
-            <button onclick="showRegister()" style="background: #333; color: #ccc; border-color: #555; font-size: 2rem;">Chưa có tài khoản? Đăng ký</button>
+            <button onclick="showRegister()" style="background: #333; color: #ccc; border-color: #555; font-size: 1.5rem;">Chưa có tài khoản? Đăng ký</button>
         </div>
 
         <div class="auth-container hidden" id="register-view">
-            <h2 style="color: #ffca28; font-size: 3.5rem;">ĐĂNG KÝ TÀI KHOẢN</h2>
+            <h2 style="color: #ffca28;">ĐĂNG KÝ TÀI KHOẢN</h2>
             <p>Hệ thống cấp cho bạn Mã ID:</p>
             <strong id="auth-id-display">----</strong>
             <p style="color: #ff5252;">* Hãy ghi nhớ Mã ID này để đăng nhập!</p>
             <input type="text" id="reg-pass" placeholder="Nhập mật khẩu tự chọn">
             <button onclick="register()" style="background: #29b6f6;">TẠO TÀI KHOẢN</button>
-            <button onclick="showLogin()" style="background: #333; color: #ccc; border-color: #555; font-size: 2rem;">Quay lại đăng nhập</button>
+            <button onclick="showLogin()" style="background: #333; color: #ccc; border-color: #555; font-size: 1.5rem;">Quay lại đăng nhập</button>
         </div>
     </div>
 
