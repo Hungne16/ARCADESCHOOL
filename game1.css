@@ -313,11 +313,17 @@ body.flash-red {
     justify-content: flex-start;
     align-items: center;
     text-align: center;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .terminal-body > * {
     flex-shrink: 0;
+}
+
+.puzzle-img {
+    flex: 1 1 0 !important;
+    min-height: 0;
+    object-fit: contain;
 }
 
 .station-title {
