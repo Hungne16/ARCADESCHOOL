@@ -80,43 +80,35 @@ function initGame() {
 }
 
 function renderTeams() {
-    const teamsLeft = document.getElementById('teams-left');
     const teamsRight = document.getElementById('teams-right');
-    if(teamsLeft) teamsLeft.innerHTML = '';
     if(teamsRight) teamsRight.innerHTML = '';
     
-    const half = Math.ceil(teams.length / 2);
-
     teams.forEach((t, index) => {
         let heartsHTML = '';
         for(let i = 0; i < 3; i++) {
             heartsHTML += `<span class="heart ${i >= t.hp ? 'lost' : ''}">❤️</span>`;
         }
         
-        // Cấu trúc card mới với ảnh nhân vật
+        // Cấu trúc card mới với ảnh nhân vật được thu nhỏ (mini-card)
         const cardHTML = `
-            <div class="team-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
-                <div class="team-header team-color-${t.id}">${t.name}</div>
-                <div class="team-body">
-                    <div class="team-info">
-                        <div class="hearts">
+            <div class="team-card mini-card ${t.hp <= 0 ? 'dead' : ''}" id="card-team-${t.id}">
+                <div class="team-header team-color-${t.id}" style="font-size: 1.5rem; padding: 2px;">${t.name}</div>
+                <div class="team-body" style="flex-direction: row; align-items: center; justify-content: space-around; padding: 5px;">
+                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}" style="margin:0;">
+                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar" style="height: 50px;">
+                        <div class="feedback-icon" id="feedback-${t.id}" style="font-size: 2.5rem; top: -15px;"></div>
+                    </div>
+                    <div class="team-info" style="width: auto; margin: 0; padding: 2px 5px; background: transparent; border: none; box-shadow: none;">
+                        <div class="hearts" style="font-size: 0.8rem; gap: 1px;">
                             ${heartsHTML}
                         </div>
-                        <div class="team-score" id="score-${t.id}">🪙 ${t.score}</div>
-                    </div>
-                    <div class="avatar-wrapper" id="avatar-wrapper-${t.id}">
-                        <img class="team-avatar" src="character/${t.id}.png" alt="Avatar">
-                        <div class="feedback-icon" id="feedback-${t.id}"></div>
+                        <div class="team-score" id="score-${t.id}" style="font-size: 1.2rem;">🪙 ${t.score}</div>
                     </div>
                 </div>
             </div>
         `;
         
-        if (index < half) {
-            if(teamsLeft) teamsLeft.innerHTML += cardHTML;
-        } else {
-            if(teamsRight) teamsRight.innerHTML += cardHTML;
-        }
+        if(teamsRight) teamsRight.innerHTML += cardHTML;
     });
 }
 
@@ -312,7 +304,8 @@ window.onload = () => {
                         d: q.opts.D, e: q.opts.E, f: q.opts.F 
                     },
                     correct: q.correct.toLowerCase(),
-                    fragment: q.fragment || "?"
+                    fragment: q.fragment || "?",
+                    image: q.image
                 }));
                 
                 // Khôi phục HTML gốc của puzzle-container

@@ -83,12 +83,8 @@ function startTimer() {
 }
 
 function renderTeams() {
-    const teamsLeft = document.getElementById('teams-left');
     const teamsRight = document.getElementById('teams-right');
-    if(teamsLeft) teamsLeft.innerHTML = '';
     if(teamsRight) teamsRight.innerHTML = '';
-
-    const half = Math.ceil(teams.length / 2);
 
     teams.forEach((t, index) => {
         let heartsHTML = '';
@@ -99,26 +95,22 @@ function renderTeams() {
         const colorClass = `bg-team-${t.id}`;
         
         const cardHTML = `
-            <div class="team-card ${t.hp <= 0 ? 'dead' : ''} flex flex-col h-full bg-white border-4 border-black rounded-xl overflow-hidden shadow-pixel mb-4" id="card-team-${t.id}">
-                <div class="team-header ${colorClass} text-white text-center text-2xl py-1 border-b-4 border-black font-bold text-shadow-pixel">${t.name}</div>
-                <div class="team-body flex flex-col items-center p-2 flex-1 relative">
-                    <div class="team-stats bg-blue-50 border-2 border-blue-200 rounded p-1 w-full flex flex-col items-center mb-1">
-                        <div class="hearts text-xl whitespace-nowrap">${heartsHTML}</div>
-                        <div class="team-score text-xl font-bold">🪙 ${t.score}</div>
+            <div class="team-card mini-card flex flex-col h-auto bg-white border-4 border-black rounded-xl overflow-hidden shadow-pixel mb-2" id="card-team-${t.id}">
+                <div class="team-header ${colorClass} text-white text-center text-lg py-1 border-b-4 border-black font-bold text-shadow-pixel leading-none">${t.name}</div>
+                <div class="team-body flex flex-row items-center p-1 justify-around relative">
+                    <div class="relative">
+                        <img class="h-10 object-contain drop-shadow-md transform origin-bottom" src="character/${t.id}.png" onerror="this.src='https://api.dicebear.com/7.x/pixel-art/svg?seed=${t.id}'" alt="Avatar">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-2xl hidden z-50 drop-shadow-md" id="feedback-${t.id}"></div>
                     </div>
-                    <div class="relative mt-auto">
-                        <img class="h-20 sm:h-24 object-contain drop-shadow-md transform origin-bottom" src="character/${t.id}.png" onerror="this.src='https://api.dicebear.com/7.x/pixel-art/svg?seed=${t.id}'" alt="Avatar">
-                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-4xl hidden z-50 drop-shadow-md" id="feedback-${t.id}"></div>
+                    <div class="team-stats bg-blue-50 border-2 border-blue-200 rounded px-1 py-0.5 flex flex-col items-center">
+                        <div class="hearts text-xs whitespace-nowrap" style="letter-spacing:-2px;">${heartsHTML}</div>
+                        <div class="team-score text-sm font-bold mt-1">🪙 ${t.score}</div>
                     </div>
                 </div>
             </div>
         `;
         
-        if (index < half) {
-            if(teamsLeft) teamsLeft.innerHTML += cardHTML;
-        } else {
-            if(teamsRight) teamsRight.innerHTML += cardHTML;
-        }
+        if(teamsRight) teamsRight.innerHTML += cardHTML;
     });
 }
 
