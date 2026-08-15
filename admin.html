@@ -100,6 +100,7 @@
                 <select id="game-select" onchange="loadSetsForRoom()">
                     <option value="1">Game 1: Mật Mã Học Đường</option>
                     <option value="2">Game 2: Đấu Trường Sinh Tồn</option>
+                    <option value="3">Game 3: Đường Đua Trí Tuệ</option>
                 </select>
                 <select id="room-set-select">
                     <option value="">-- Đang tải dữ liệu... --</option>
@@ -155,9 +156,17 @@
                         <button onclick="sendG2Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
                         <button onclick="sendG2Ans('F')" style="background: #e84118; color: #fff;">F</button>
                     </div>
-                    <hr style="border: 1px dashed #555; margin: 20px 0;">
                     <button onclick="sendG2Reveal()" style="background: #ffca28;">CÔNG BỐ KẾT QUẢ 🚀</button>
                     <button onclick="sendG2Next()" style="background: #00ffcc; margin-top: 10px;">CÂU TIẾP THEO</button>
+                </div>
+
+                <!-- Controls for Game 3 -->
+                <div id="g3-controls" class="hidden">
+                    <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 3 (ĐƯỜNG ĐUA)</h3>
+                    <p style="font-size: 2rem;">1. Chấm điểm/Cộng tiến độ cho Đội:</p>
+                    <div id="g3-team-btns" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;"></div>
+                    <hr style="border: 1px dashed #555; margin: 20px 0;">
+                    <button onclick="sendG3Next()" style="background: #00ffcc; margin-top: 10px;">CÂU TIẾP THEO</button>
                 </div>
             </div>
         </div>
@@ -168,6 +177,7 @@
                 <select id="qbank-game-select" onchange="loadSetsForBank()">
                     <option value="game1">Bộ câu hỏi: Game 1 (Mật Mã Học Đường)</option>
                     <option value="game2">Bộ câu hỏi: Game 2 (Đấu Trường Sinh Tồn)</option>
+                    <option value="game3">Bộ câu hỏi: Game 3 (Đường Đua Trí Tuệ)</option>
                 </select>
                 
                 <div style="display:flex; gap:10px; margin-bottom: 10px;">
@@ -628,9 +638,20 @@
                 if (gameId == 1) {
                     document.getElementById('g1-controls').classList.remove('hidden');
                     document.getElementById('g1-team-btns').innerHTML = btnsHTML;
-                } else {
+                } else if (gameId == 2) {
                     document.getElementById('g2-controls').classList.remove('hidden');
                     document.getElementById('g2-team-btns').innerHTML = btnsHTML;
+                } else if (gameId == 3) {
+                    document.getElementById('g3-controls').classList.remove('hidden');
+                    let g3Btns = '';
+                    for(let i=1; i<=teamsCount; i++) {
+                        g3Btns += `<div style="display:flex; gap:10px; align-items:center; background: #222; padding: 5px 10px; border-radius: 5px; border: 2px solid #555;">
+                            <span style="font-size: 2rem; width: 80px; color: #ffca28;">Đội ${i}</span>
+                            <button onclick="sendG3Score(${i}, -1)" style="background: #e53935; width: auto; padding: 5px 15px; margin: 0;">- Lùi</button>
+                            <button onclick="sendG3Score(${i}, 1)" style="background: #00e676; width: auto; padding: 5px 15px; margin: 0;">+ Tiến</button>
+                        </div>`;
+                    }
+                    document.getElementById('g3-team-btns').innerHTML = g3Btns;
                 }
                 
                 // Lắng nghe khi máy chiếu kết nối
