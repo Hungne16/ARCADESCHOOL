@@ -444,33 +444,33 @@ body.flash-red {
     background-color: var(--box-bg);
     border: 4px solid var(--border-color);
     border-radius: 12px;
-    padding: 15px;
+    padding: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
     box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
 }
 
 .inventory h3 {
-    font-size: 2.8rem;
+    font-size: 1.5rem;
     color: #555;
 }
 
 .slots {
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }
 
 .slot {
-    width: 80px;
-    height: 80px;
-    border: 6px dashed #aaa;
-    border-radius: 15px;
+    width: 40px;
+    height: 40px;
+    border: 3px dashed #aaa;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 4rem;
+    font-size: 2rem;
     color: #ccc;
     background-color: #fafafa;
 }
@@ -571,22 +571,22 @@ body.flash-red {
     background-color: #d1e8ff;
     border: 4px dashed #64b5f6;
     border-radius: 12px;
-    padding: 10px;
+    padding: 5px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
     box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
 }
 
 .answers-header {
     background-color: #1976d2;
     color: #fff;
-    font-size: 2rem;
+    font-size: 1.2rem;
     text-align: center;
-    padding: 5px 20px;
-    border-radius: 20px;
+    padding: 2px 10px;
+    border-radius: 10px;
     align-self: center;
-    border: 3px solid #0d47a1;
+    border: 2px solid #0d47a1;
     box-shadow: 2px 2px 0px #000;
 }
 
@@ -598,26 +598,26 @@ body.flash-red {
 
 .answer-card {
     background-color: #fff;
-    border: 4px solid #000;
-    border-radius: 12px;
+    border: 3px solid #000;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    padding: 8px;
-    box-shadow: 4px 4px 0px #000;
+    padding: 4px;
+    box-shadow: 2px 2px 0px #000;
     color: #333;
-    font-size: 2rem;
+    font-size: 1.5rem;
     transition: transform 0.2s;
 }
 
 .answer-card .letter {
-    font-size: 2.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #fff;
-    padding: 2px 12px;
-    border-radius: 8px;
-    margin-right: 12px;
-    border: 3px solid #000;
-    box-shadow: 2px 2px 0px #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    border: 2px solid #000;
+    box-shadow: 1px 1px 0px #000;
 }
 
 .answer-card.selected {
@@ -641,9 +641,9 @@ body.flash-red {
     background-color: #1565c0;
     color: #fff;
     text-align: center;
-    padding: 8px;
-    font-size: 1.8rem;
-    border-radius: 8px;
-    border: 3px solid #0d47a1;
-    margin-top: 5px;
+    padding: 4px;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    border: 2px solid #0d47a1;
+    margin-top: 3px;
 }
