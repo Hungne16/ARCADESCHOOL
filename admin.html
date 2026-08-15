@@ -97,9 +97,12 @@
         <div id="tab-room" class="tab-content" style="margin: 0 auto;">
             <div id="create-view" class="admin-box">
                 <h2>TẠO PHÒNG MỚI</h2>
-                <select id="game-select">
+                <select id="game-select" onchange="loadSetsForRoom()">
                     <option value="1">Game 1: Mật Mã Học Đường</option>
                     <option value="2">Game 2: Đấu Trường Sinh Tồn</option>
+                </select>
+                <select id="room-set-select">
+                    <option value="">-- Đang tải dữ liệu... --</option>
                 </select>
                 <select id="teams-select">
                     <option value="2">2 Đội (Chia nửa lớp)</option>
@@ -162,12 +165,18 @@
         <div id="tab-qbank" class="tab-content hidden" style="margin: 0 auto;">
             <div class="admin-box" style="max-width: 800px;">
                 <h2>KHO CÂU HỎI</h2>
-                <select id="qbank-game-select" onchange="loadQuestions()">
+                <select id="qbank-game-select" onchange="loadSetsForBank()">
                     <option value="game1">Bộ câu hỏi: Game 1 (Mật Mã Học Đường)</option>
                     <option value="game2">Bộ câu hỏi: Game 2 (Đấu Trường Sinh Tồn)</option>
                 </select>
                 
-                <button onclick="showEditor()" style="background: #29b6f6; margin-bottom: 15px;">+ THÊM CÂU HỎI MỚI</button>
+                <div style="display:flex; gap:10px; margin-bottom: 10px;">
+                    <select id="qbank-set-select" onchange="loadQuestions()" style="margin:0; font-size:1.8rem;"></select>
+                    <button onclick="createNewSet()" style="margin:0; width:auto; padding:0 15px; font-size:1.8rem; background:#00ffcc; color:#000;">TẠO BỘ MỚI</button>
+                    <button onclick="deleteCurrentSet()" style="margin:0; width:auto; padding:0 15px; font-size:1.8rem; background:#e53935; color:#fff;">XÓA BỘ</button>
+                </div>
+                
+                <button id="btn-add-q" onclick="showEditor()" style="background: #29b6f6; margin-bottom: 15px;">+ THÊM CÂU HỎI MỚI</button>
                 
                 <div id="q-list" class="q-list">
                     <!-- Danh sách câu hỏi render ở đây -->
@@ -234,6 +243,7 @@
             document.getElementById('auth-content').classList.add('hidden');
             document.getElementById('app-content').classList.remove('hidden');
             document.getElementById('current-user-display').innerText = currentUserId;
+            loadSetsForRoom();
         }
 
         function showLogin() {
@@ -260,9 +270,9 @@
                 } else {
                     db.ref('users/' + newGeneratedId).set({
                         password: pass,
-                        questions: {
-                            game1: defaultG1,
-                            game2: defaultG2
+                        sets: {
+                            [`set_${Date.now()}_1`]: { name: "Bộ Gốc (Mật Mã)", gameType: "game1", questions: defaultG1 },
+                            [`set_${Date.now()}_2`]: { name: "Bộ Gốc (Sinh Tồn)", gameType: "game2", questions: defaultG2 }
                         }
                     }).then(() => {
                         localStorage.setItem('teacherId', newGeneratedId);
@@ -280,8 +290,18 @@
             if (!id || !pass) return alert("Vui lòng nhập đủ ID và Mật khẩu!");
             
             db.ref('users/' + id).once('value', snap => {
-                const user = snap.val();
+                let user = snap.val();
                 if (user && user.password === pass) {
+                    // MIGRATION: Chuyển dữ liệu cũ sang Sets nếu cần
+                    if (user.questions && !user.sets) {
+                        user.sets = {
+                            [`set_${Date.now()}_1`]: { name: "Bộ Cũ (Mật Mã)", gameType: "game1", questions: user.questions.game1 || [] },
+                            [`set_${Date.now()}_2`]: { name: "Bộ Cũ (Sinh Tồn)", gameType: "game2", questions: user.questions.game2 || [] }
+                        };
+                        db.ref('users/' + id + '/sets').set(user.sets);
+                        db.ref('users/' + id + '/questions').remove();
+                    }
+                    
                     localStorage.setItem('teacherId', id);
                     currentUserId = id;
                     showApp();
@@ -308,7 +328,9 @@
             document.getElementById(`btn-tab-${tabId}`).classList.add('active');
             
             if (tabId === 'qbank') {
-                loadQuestions();
+                loadSetsForBank();
+            } else if (tabId === 'room') {
+                loadSetsForRoom();
             }
         }
 
@@ -326,21 +348,78 @@
             { q: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?", opts: { A: "Fansipan", B: "Bạch Mã", C: "Langbiang", D: "Ngọc Linh" }, correct: "A" }
         ];
 
-        function loadQuestions() {
+        let currentSetId = null;
+
+        function loadSetsForBank() {
             const gameType = document.getElementById('qbank-game-select').value;
+            const selectEl = document.getElementById('qbank-set-select');
+            
+            db.ref(`users/${currentUserId}/sets`).once('value', snap => {
+                const sets = snap.val() || {};
+                selectEl.innerHTML = '';
+                
+                let foundAny = false;
+                for (let setId in sets) {
+                    if (sets[setId].gameType === gameType) {
+                        selectEl.innerHTML += `<option value="${setId}">${sets[setId].name}</option>`;
+                        foundAny = true;
+                    }
+                }
+                
+                if(!foundAny) {
+                    selectEl.innerHTML = '<option value="">(Chưa có bộ nào)</option>';
+                    document.getElementById('q-list').innerHTML = '<p style="color:#ff5252; font-size:2rem;">Bạn chưa có bộ câu hỏi nào cho Game này. Hãy TẠO BỘ MỚI!</p>';
+                    document.getElementById('btn-add-q').style.display = 'none';
+                    currentSetId = null;
+                } else {
+                    document.getElementById('btn-add-q').style.display = 'inline-block';
+                    loadQuestions();
+                }
+            });
+        }
+
+        function createNewSet() {
+            const gameType = document.getElementById('qbank-game-select').value;
+            const setName = prompt("Nhập tên bộ câu hỏi mới (Ví dụ: Toán lớp 6, Bài 1...):");
+            if(!setName) return;
+            
+            const newSetId = "set_" + Date.now();
+            const defaultQuestions = (gameType === 'game1') ? defaultG1 : defaultG2;
+            
+            db.ref(`users/${currentUserId}/sets/${newSetId}`).set({
+                name: setName,
+                gameType: gameType,
+                questions: defaultQuestions 
+            }).then(() => {
+                loadSetsForBank(); 
+                alert("Tạo bộ thành công!");
+            });
+        }
+
+        function deleteCurrentSet() {
+            const setId = document.getElementById('qbank-set-select').value;
+            if(!setId) return;
+            if(confirm("XÓA BỘ CÂU HỎI NÀY VĨNH VIỄN? KHÔNG THỂ KHÔI PHỤC!")) {
+                db.ref(`users/${currentUserId}/sets/${setId}`).remove().then(() => {
+                    loadSetsForBank();
+                });
+            }
+        }
+
+        function loadQuestions() {
+            const setId = document.getElementById('qbank-set-select').value;
+            if(!setId) return;
+            currentSetId = setId;
+            const gameType = document.getElementById('qbank-game-select').value;
+            
             const qList = document.getElementById('q-list');
             qList.innerHTML = '<p style="font-size: 2rem; color: #888;">Đang tải dữ liệu...</p>';
             
             document.getElementById('frag-container').style.display = (gameType === 'game1') ? 'block' : 'none';
             hideEditor();
 
-            db.ref(`users/${currentUserId}/questions/${gameType}`).once('value', snap => {
-                let questions = snap.val();
-                if (!questions) {
-                    // Nếu rỗng, seed data mặc định
-                    questions = (gameType === 'game1') ? defaultG1 : defaultG2;
-                    db.ref(`users/${currentUserId}/questions/${gameType}`).set(questions);
-                }
+            db.ref(`users/${currentUserId}/sets/${setId}/questions`).once('value', snap => {
+                let questions = snap.val() || [];
                 currentQuestionsCache[gameType] = questions;
                 renderQuestionList(questions);
             });
@@ -451,7 +530,7 @@
                 questions[currentEditingIndex] = newQ; // Update
             }
             
-            db.ref(`users/${currentUserId}/questions/${gameType}`).set(questions).then(() => {
+            db.ref(`users/${currentUserId}/sets/${currentSetId}/questions`).set(questions).then(() => {
                 loadQuestions();
             });
         }
@@ -461,16 +540,45 @@
             const gameType = document.getElementById('qbank-game-select').value;
             let questions = currentQuestionsCache[gameType];
             questions.splice(idx, 1);
-            db.ref(`users/${currentUserId}/questions/${gameType}`).set(questions).then(() => {
+            db.ref(`users/${currentUserId}/sets/${currentSetId}/questions`).set(questions).then(() => {
                 loadQuestions();
             });
         }
 
         // ================= ROOM CREATION LOGIC =================
 
+        function loadSetsForRoom() {
+            const gameId = document.getElementById('game-select').value;
+            const gameType = (gameId === "1") ? "game1" : "game2";
+            const selectEl = document.getElementById('room-set-select');
+            
+            if(!currentUserId) return; 
+            
+            selectEl.innerHTML = '<option value="">-- Đang tải... --</option>';
+            db.ref(`users/${currentUserId}/sets`).once('value', snap => {
+                const sets = snap.val() || {};
+                selectEl.innerHTML = '';
+                
+                let foundAny = false;
+                for (let setId in sets) {
+                    if (sets[setId].gameType === gameType) {
+                        selectEl.innerHTML += `<option value="${setId}">${sets[setId].name}</option>`;
+                        foundAny = true;
+                    }
+                }
+                
+                if(!foundAny) {
+                    selectEl.innerHTML = '<option value="">(Chưa có bộ câu hỏi - Tới Ngân hàng để tạo)</option>';
+                }
+            });
+        }
+
         function createRoom() {
             const gameId = document.getElementById('game-select').value;
             const teamsCount = document.getElementById('teams-select').value;
+            const setId = document.getElementById('room-set-select').value;
+            
+            if(!setId) return alert("Bạn chưa chọn Bộ câu hỏi nào! Hãy tạo bộ câu hỏi trong Ngân Hàng trước.");
             
             myPin = Math.floor(1000 + Math.random() * 9000).toString();
             
@@ -489,11 +597,9 @@
                 }
             }, 5000);
 
-            // Fetch current questions from Q-Bank based on selected game
-            const gameType = (gameId === "1") ? "game1" : "game2";
-            
-            db.ref(`users/${currentUserId}/questions/${gameType}`).once('value').then(snap => {
-                let questionsData = snap.val() || ((gameType === "game1") ? defaultG1 : defaultG2);
+            // Fetch questions from the chosen Set
+            db.ref(`users/${currentUserId}/sets/${setId}/questions`).once('value').then(snap => {
+                let questionsData = snap.val() || ((gameId === "1") ? defaultG1 : defaultG2);
                 
                 // Copy questions to Room
                 return db.ref('rooms/' + myPin).set({
