@@ -201,6 +201,9 @@
 
                     <label>Đáp án ĐÚNG (A, B, C, D, E, F):</label>
                     <input type="text" id="edit-correct" placeholder="VD: A" style="text-transform: uppercase;">
+                    
+                    <label>Link ảnh minh họa (Tùy chọn):</label>
+                    <input type="text" id="edit-img" placeholder="Dán link ảnh (http...)">
 
                     <div id="frag-container">
                         <label>Mảnh ghép thưởng (Chỉ dành cho Game 1):</label>
@@ -271,8 +274,8 @@
                     db.ref('users/' + newGeneratedId).set({
                         password: pass,
                         sets: {
-                            [`set_${Date.now()}_1`]: { name: "Bộ Gốc (Mật Mã)", gameType: "game1", questions: defaultG1 },
-                            [`set_${Date.now()}_2`]: { name: "Bộ Gốc (Sinh Tồn)", gameType: "game2", questions: defaultG2 }
+                            [`set_${Date.now()}_1`]: { name: "Bộ Gốc (Mật Mã)", gameType: "game1", questions: [] },
+                            [`set_${Date.now()}_2`]: { name: "Bộ Gốc (Sinh Tồn)", gameType: "game2", questions: [] }
                         }
                     }).then(() => {
                         localStorage.setItem('teacherId', newGeneratedId);
@@ -337,16 +340,7 @@
         // ================= Q-BANK LOGIC =================
 
         let currentEditingIndex = -1;
-        
-        const defaultG1 = [
-            { fragment: "4", q: "Điền số tiếp theo vào dãy: 2, 6, 12, 20, 30, ...", opts: {A: "40", B: "42", C: "45", D: "50", E: "38", F: "36"}, correct: "B" },
-            { fragment: "2", q: "Thủ đô của nước Việt Nam là gì?", opts: {A: "TP.HCM", B: "Đà Nẵng", C: "Hà Nội", D: "Huế", E: "Cần Thơ", F: "Hải Phòng"}, correct: "C" },
-            { fragment: "5", q: "Con vật nào biểu tượng cho năm 2024?", opts: {A: "Mèo", B: "Rồng", C: "Rắn", D: "Hổ"}, correct: "B" }
-        ];
-        const defaultG2 = [
-            { q: "Chiến thắng Điện Biên Phủ diễn ra vào năm nào?", opts: { A: "1945", B: "1954", C: "1975", D: "1930" }, correct: "B" },
-            { q: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?", opts: { A: "Fansipan", B: "Bạch Mã", C: "Langbiang", D: "Ngọc Linh" }, correct: "A" }
-        ];
+        // Đã xóa defaultG1 và defaultG2
 
         let currentSetId = null;
 
@@ -384,12 +378,11 @@
             if(!setName) return;
             
             const newSetId = "set_" + Date.now();
-            const defaultQuestions = (gameType === 'game1') ? defaultG1 : defaultG2;
             
             db.ref(`users/${currentUserId}/sets/${newSetId}`).set({
                 name: setName,
                 gameType: gameType,
-                questions: defaultQuestions 
+                questions: [] 
             }).then(() => {
                 loadSetsForBank(); 
                 alert("Tạo bộ thành công!");
@@ -441,12 +434,13 @@
                     }
                 });
                 
-                let extra = q.fragment ? `<span style="background: #ffca28; color:#000; padding:2px 5px; border-radius:3px;">Mảnh: ${q.fragment}</span>` : '';
+                let extra = q.fragment ? `<span style="background: #ffca28; color:#000; padding:2px 5px; border-radius:3px; margin-right: 5px;">Mảnh: ${q.fragment}</span>` : '';
+                let imgThumb = q.image ? `<img src="${q.image}" style="height: 30px; vertical-align: middle; margin-left: 5px; border: 1px solid #fff;">` : '';
                 
                 html += `
                     <div class="q-item">
                         <div class="q-item-header">
-                            <span class="q-item-title">Câu ${idx + 1}: ${q.q} ${extra}</span>
+                            <span class="q-item-title">Câu ${idx + 1}: ${q.q} ${extra} ${imgThumb}</span>
                             <div>
                                 <button onclick="editQuestion(${idx})" style="background: #ffb300; width: auto; padding: 5px 15px; font-size: 1.5rem; margin:0;">SỬA</button>
                                 <button onclick="deleteQuestion(${idx})" style="background: #e53935; width: auto; padding: 5px 15px; font-size: 1.5rem; margin:0;">XÓA</button>
@@ -474,6 +468,7 @@
             document.getElementById('edit-opt-F').value = '';
             document.getElementById('edit-correct').value = '';
             document.getElementById('edit-fragment').value = '';
+            document.getElementById('edit-img').value = '';
         }
 
         function hideEditor() {
@@ -497,6 +492,7 @@
             document.getElementById('edit-opt-F').value = q.opts.F || '';
             document.getElementById('edit-correct').value = q.correct || '';
             document.getElementById('edit-fragment').value = q.fragment || '';
+            document.getElementById('edit-img').value = q.image || '';
             
             document.getElementById('q-editor').scrollIntoView({ behavior: 'smooth' });
         }
@@ -508,6 +504,7 @@
             const qTxt = document.getElementById('edit-q').value.trim();
             const correctTxt = document.getElementById('edit-correct').value.trim().toUpperCase();
             const fragTxt = document.getElementById('edit-fragment').value.trim();
+            const imgTxt = document.getElementById('edit-img').value.trim();
             
             if(!qTxt || !correctTxt) return alert("Vui lòng điền đủ câu hỏi và đáp án đúng!");
             
@@ -516,6 +513,8 @@
                 correct: correctTxt,
                 opts: {}
             };
+            
+            if(imgTxt) newQ.image = imgTxt;
             
             if(gameType === 'game1') newQ.fragment = fragTxt;
             
@@ -599,7 +598,7 @@
 
             // Fetch questions from the chosen Set
             db.ref(`users/${currentUserId}/sets/${setId}/questions`).once('value').then(snap => {
-                let questionsData = snap.val() || ((gameId === "1") ? defaultG1 : defaultG2);
+                let questionsData = snap.val() || [];
                 
                 // Copy questions to Room
                 return db.ref('rooms/' + myPin).set({

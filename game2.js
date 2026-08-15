@@ -135,7 +135,10 @@ function loadQuestion() {
 
     const q = questions[currentQuestion];
     if(qCounter) qCounter.innerText = `📋 Câu: ${currentQuestion + 1}/${questions.length}`;
-    if(qText) qText.innerHTML = q.q;
+    if(qText) {
+        let imgHtml = q.image ? `<br><img src="${q.image}" class="puzzle-img mx-auto max-h-64 mt-4 border-4 border-white shadow-pixel rounded-lg">` : '';
+        qText.innerHTML = q.q + imgHtml;
+    }
     
     if(answerInput) {
         answerInput.value = '';
