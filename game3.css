@@ -1,0 +1,699 @@
+:root {
+    --bg-color: #81d4fa; /* Xanh da trời sáng dễ thương */
+    --text-color: #222;
+    --primary-color: #ff5252; /* Đỏ nhấn */
+    --secondary-color: #00e676; /* Xanh lá mạ */
+    --box-bg: #ffffff; /* Nền trắng cho dễ đọc */
+    --border-color: #000000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    /* Tạo pattern sọc caro mờ mờ cho giống game cổ điển */
+    background-image: linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-color);
+    font-family: 'VT323', monospace;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+body.flash-red {
+    animation: flashRed 0.6s ease-out;
+}
+
+@keyframes flashRed {
+    0% { background-color: #ff5252; box-shadow: inset 0 0 200px rgba(255,0,0,1); }
+    100% { background-color: var(--bg-color); box-shadow: inset 0 0 0px rgba(255,0,0,0); }
+}
+
+/* Xóa bóng đen CRT làm tối màn hình */
+.crt-overlay {
+    display: none; 
+}
+
+.game-container {
+    width: 98vw;
+    max-width: 1600px;
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Giảm gap để kéo nội dung lên */
+    z-index: 5;
+}
+
+.side-column {
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+
+.btn-back {
+    background-color: #ffca28; /* Vàng thân thiện */
+    border: 3px solid var(--border-color);
+    border-radius: 8px;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 1.8rem;
+    padding: 5px 15px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #000;
+    transition: all 0.1s;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-back:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+.timer {
+    font-size: 3rem;
+    color: #000;
+    background-color: #eeeeee;
+    padding: 5px 10px;
+    border: 4px solid #000;
+    border-radius: 8px;
+    width: 100%;
+    text-align: center;
+}
+
+.timer.danger {
+    background-color: var(--primary-color);
+    color: #fff;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+/* =========================================
+   TEAMS DASHBOARD
+   ========================================= */
+.main-split {
+    display: flex;
+    flex-grow: 1;
+    gap: 20px;
+    min-height: 0;
+}
+
+.teams-side {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.center-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0;
+    min-height: 0;
+}
+
+.team-card {
+    flex: 1;
+    background-color: var(--box-bg);
+    border: 5px solid var(--border-color);
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+.team-card.dead {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    box-shadow: 0px 0px 0px;
+}
+
+.team-header {
+    color: #fff;
+    font-size: 2rem;
+    padding: 5px;
+    border-bottom: 4px solid #fff;
+    text-shadow: 1px 1px 0px #000;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.team-color-1 { background-color: #e21b3c; }
+.team-color-2 { background-color: #1368ce; }
+.team-color-3 { background-color: #26890c; }
+.team-color-4 { background-color: #8e44ad; }
+.team-color-5 { background-color: #f39c12; }
+.team-color-6 { background-color: #e84393; }
+
+.team-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    background-color: #fff;
+    flex: 1;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.avatar-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: auto; /* Push to bottom */
+}
+
+.team-avatar {
+    height: 110px;
+    width: auto;
+    object-fit: contain;
+    transform-origin: bottom center;
+    filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.15));
+}
+
+.feedback-icon {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    font-size: 4.5rem;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.avatar-wrapper.pop-up {
+    transform: translateY(-15px) scale(1.15);
+    z-index: 99;
+}
+
+.avatar-wrapper.pop-up.correct .feedback-icon {
+    transform: translateX(-50%) scale(1);
+    color: #00e676;
+}
+
+.avatar-wrapper.pop-up.wrong .feedback-icon {
+    transform: translateX(-50%) scale(1);
+    color: #ff5252;
+}
+
+.team-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    background-color: #f8fbff;
+    border: 3px solid #d0e1f9;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 5px;
+    box-shadow: inset 0px 0px 5px rgba(0,0,0,0.05);
+}
+
+.team-score {
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.hearts {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    font-size: 1.2rem;
+}
+
+.heart {
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.heart.lost {
+    filter: grayscale(100%);
+    opacity: 0.4;
+    transform: scale(0.7);
+}
+
+
+
+/* =========================================
+   MAIN GAME BOX (Khung nội dung chính)
+   ========================================= */
+.terminal {
+    flex-grow: 1;
+    background-color: var(--box-bg);
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+    overflow: hidden;
+    min-height: 200px;
+    flex-shrink: 1;
+}
+
+/* Đổi thành thanh tiêu đề cute như cửa sổ máy tính hoạt hình */
+.terminal-header {
+    background-color: #29b6f6; 
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 4px solid var(--border-color);
+}
+
+.dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #000;
+}
+.dot.red { background-color: #ff5252; }
+.dot.yellow { background-color: #ffea00; }
+.dot.green { background-color: #00e676; }
+
+.terminal-title {
+    margin-left: 15px;
+    color: #fff;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.terminal-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.terminal-body > * {
+    flex-shrink: 0;
+}
+
+.puzzle-img {
+    flex: 1 1 0 !important;
+    min-height: 0;
+    object-fit: contain;
+}
+
+.station-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+}
+
+.puzzle-desc {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    max-width: 95%;
+    line-height: 1.3;
+    background-color: #f5f5f5;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 3px dashed #ccc;
+}
+
+.team-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.btn-team {
+    background-color: #eeeeee;
+    border: 4px solid #aaa;
+    border-radius: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 2rem;
+    padding: 10px 25px;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.btn-team:hover:not(:disabled) {
+    background-color: #fff;
+    border-color: #000;
+    color: #000;
+}
+
+.btn-team.active {
+    background-color: #00e676;
+    border-color: #000;
+    color: #000;
+    box-shadow: 0 0 15px #00e676;
+    transform: scale(1.1);
+}
+
+.btn-team:disabled {
+    background-color: #ffcdd2;
+    border-color: #ef9a9a;
+    color: #e53935;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.input-group {
+    display: flex;
+    gap: 20px;
+}
+
+.answer-input {
+    background-color: #fff;
+    border: 6px solid var(--border-color);
+    border-radius: 12px;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 2.5rem;
+    padding: 15px 30px;
+    width: 450px;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+}
+
+.answer-input:focus {
+    border-color: #29b6f6;
+    box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
+}
+
+.btn-submit {
+    background-color: var(--secondary-color);
+    border: 6px solid var(--border-color);
+    border-radius: 12px;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 2.5rem;
+    padding: 15px 40px;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #000;
+    transition: all 0.1s;
+}
+
+.btn-submit:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #000;
+}
+
+/* Shake Animation cho lúc nhập sai */
+.shake {
+    animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    background-color: #ffcdd2 !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-4px, 0, 0); }
+    20%, 80% { transform: translate3d(8px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-12px, 0, 0); }
+    40%, 60% { transform: translate3d(12px, 0, 0); }
+}
+
+/* =========================================
+   INVENTORY (Hòm đồ chứa mật mã)
+   ========================================= */
+.inventory {
+    grid-area: inventory;
+    background-color: var(--box-bg);
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
+}
+
+.inventory h3 {
+    font-size: 1.5rem;
+    color: #555;
+}
+
+.slots {
+    display: flex;
+    gap: 10px;
+}
+
+.slot {
+    width: 40px;
+    height: 40px;
+    border: 3px dashed #aaa;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: #ccc;
+    background-color: #fafafa;
+}
+
+.slot.filled {
+    border-style: solid;
+    border-color: #000;
+    background-color: #ffca28;
+    color: #000;
+    text-shadow: 1px 1px 0px #fff;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* =========================================
+   MODALS (Thông báo nảy Spring Bounce)
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: #fff;
+    border: 5px solid #000;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
+    max-width: 500px;
+}
+
+.spring-bounce {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-overlay.hidden .spring-bounce {
+    transform: scale(0.5) translateY(50px);
+    opacity: 0;
+}
+
+#modal-title {
+    font-size: 6rem;
+    color: var(--secondary-color);
+    text-shadow: 4px 4px 0px #000;
+    margin-bottom: 25px;
+}
+
+#modal-text {
+    font-size: 3.5rem;
+    color: #333;
+    margin-bottom: 35px;
+    line-height: 1.4;
+}
+
+.modal-content .pixel-btn {
+    background-color: #29b6f6;
+    color: #fff;
+    border: 6px solid #000;
+    border-radius: 15px;
+    font-family: 'VT323', monospace;
+    font-size: 3.5rem;
+    padding: 15px 50px;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #000;
+}
+
+.modal-content .pixel-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0px 0px 0px #000;
+}
+/* =========================================
+   ANSWERS GRID (Game 1 Multiple Choice)
+   ========================================= */
+.answers-container {
+    background-color: #d1e8ff;
+    border: 4px dashed #64b5f6;
+    border-radius: 12px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+.answers-header {
+    background-color: #1976d2;
+    color: #fff;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 2px 10px;
+    border-radius: 10px;
+    align-self: center;
+    border: 2px solid #0d47a1;
+    box-shadow: 2px 2px 0px #000;
+}
+
+.answers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.answer-card {
+    background-color: #fff;
+    border: 3px solid #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    box-shadow: 2px 2px 0px #000;
+    color: #333;
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.answer-card .letter {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    border: 2px solid #000;
+    box-shadow: 1px 1px 0px #000;
+}
+
+.answer-card.selected {
+    transform: scale(0.95);
+    background-color: #fff9c4;
+    border-color: #fbc02d;
+}
+
+.answer-card.correct {
+    background-color: #c8e6c9;
+    border-color: #2e7d32;
+    animation: pulse 0.5s infinite alternate;
+}
+
+.answer-card.wrong {
+    background-color: #ffcdd2;
+    border-color: #c62828;
+}
+
+.instruction-bar {
+    background-color: #1565c0;
+    color: #fff;
+    text-align: center;
+    padding: 4px;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    border: 2px solid #0d47a1;
+    margin-top: 3px;
+}
+
+ / *   G a m e   3   R a c i n g   s p e c i f i c   s t y l e s   * / 
+ . t r a c k   { 
+         d i s p l a y :   f l e x ; 
+         a l i g n - i t e m s :   c e n t e r ; 
+         b a c k g r o u n d :   # 4 4 4 ; 
+         b o r d e r - r a d i u s :   8 p x ; 
+         p a d d i n g :   1 0 p x ; 
+         m a r g i n - b o t t o m :   5 p x ; 
+         p o s i t i o n :   r e l a t i v e ; 
+         b o r d e r :   2 p x   d a s h e d   # 6 6 6 ; 
+ } 
+ . t r a c k   . t e a m - n a m e   { 
+         f o n t - s i z e :   2 r e m ; 
+         c o l o r :   # f f c a 2 8 ; 
+         w i d t h :   8 0 p x ; 
+         f l e x - s h r i n k :   0 ; 
+ } 
+ . t r a c k   . p r o g r e s s - b a r   { 
+         f l e x - g r o w :   1 ; 
+         h e i g h t :   4 0 p x ; 
+         b a c k g r o u n d :   # 1 1 1 ; 
+         b o r d e r - r a d i u s :   2 0 p x ; 
+         m a r g i n :   0   1 5 p x ; 
+         p o s i t i o n :   r e l a t i v e ; 
+         b o r d e r :   2 p x   s o l i d   # 3 3 3 ; 
+         o v e r f l o w :   h i d d e n ; 
+ } 
+ . t r a c k   . r a c e r   { 
+         h e i g h t :   3 6 p x ; 
+         w i d t h :   3 6 p x ; 
+         p o s i t i o n :   a b s o l u t e ; 
+         t o p :   0 ; 
+         l e f t :   0 ; 
+         t r a n s i t i o n :   l e f t   0 . 5 s   e a s e - i n - o u t ; 
+ } 
+ . t r a c k   . s c o r e   { 
+         f o n t - s i z e :   2 . 5 r e m ; 
+         c o l o r :   # 0 0 f f c c ; 
+         w i d t h :   4 0 p x ; 
+         t e x t - a l i g n :   c e n t e r ; 
+ } 
+  
+ 

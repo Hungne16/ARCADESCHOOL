@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đường Đua Trí Tuệ - Escape Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="game3.css?v=1">
+</head>
+<body>
+    <div class="crt-overlay"></div>
+
+    <button class="btn-back" style="position: absolute; top: 10px; left: 10px; z-index: 100; width: auto;" onclick="window.location.href='index.html'">← RỜI PHÒNG</button>
+
+    <div class="game-container">
+        <div class="main-split">
+            <!-- Center Content -->
+            <main class="center-content">
+                <main class="terminal">
+
+                    <div class="terminal-body" id="puzzle-container">
+                        <!-- Nội dung câu hỏi sẽ được inject vào đây bằng JS -->
+                    </div>
+
+                    <!-- Bảng Đáp án A-F cho Game 1 -->
+                    <div class="answers-container" style="margin: 0 10px; border-width: 2px; box-shadow: none;">
+                        <div class="answers-header">ĐÁP ÁN</div>
+                        <div class="answers-grid" id="answers-grid">
+                            <div class="answer-card" id="ans-a"><span class="letter" style="background:#e21b3c;">A</span> <span class="text" id="text-a">...</span></div>
+                            <div class="answer-card" id="ans-b"><span class="letter" style="background:#1368ce;">B</span> <span class="text" id="text-b">...</span></div>
+                            <div class="answer-card" id="ans-c"><span class="letter" style="background:#d89e00;">C</span> <span class="text" id="text-c">...</span></div>
+                            <div class="answer-card" id="ans-d"><span class="letter" style="background:#26890c;">D</span> <span class="text" id="text-d">...</span></div>
+                            <div class="answer-card" id="ans-e"><span class="letter" style="background:#8e44ad;">E</span> <span class="text" id="text-e">...</span></div>
+                            <div class="answer-card" id="ans-f"><span class="letter" style="background:#e84118;">F</span> <span class="text" id="text-f">...</span></div>
+                        </div>
+                        <div class="instruction-bar">
+                            🏆 CHỌN ĐÁP ÁN BẰNG CÁCH BẤM PHÍM A, B, C, D, E, F 🏆
+                        </div>
+                    </div>
+                </main>
+            </main>
+
+            <!-- Right Teams Column (RACE TRACKS) -->
+            <aside class="side-column" style="width: 40%; max-width: 500px; display: flex; flex-direction: column; padding: 10px; background: #222; border-left: 5px solid #000;">
+                <h3 style="color: #ffca28; font-size: 3rem; text-align: center; margin: 0 0 10px 0; text-shadow: 2px 2px 0 #000;">ĐƯỜNG ĐUA TRÍ TUỆ</h3>
+                <div class="tracks-container" id="tracks-container" style="display: flex; flex-direction: column; flex: 1; justify-content: space-around;">
+                    <!-- Tracks rendered by JS -->
+                </div>
+            </aside>
+        </div>
+
+    <!-- Popup Overlay (Success / Victory / GameOver) -->
+    <div class="modal-overlay hidden" id="modal">
+        <div class="modal-content spring-bounce">
+            <h2 id="modal-title">THÀNH CÔNG!</h2>
+            <p id="modal-text">Bạn đã nhận được mảnh ghép.</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="game3.js?v=1"></script>
+</body>
+</html>

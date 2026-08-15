@@ -101,8 +101,10 @@
                         // Chuyển trang sang Game tương ứng và truyền PIN vào URL
                         if (room.gameId == 1) {
                             window.location.href = `game1.html?room=${pin}&teams=${room.teamsCount}`;
-                        } else {
+                        } else if (room.gameId == 2) {
                             window.location.href = `game2.html?room=${pin}&teams=${room.teamsCount}`;
+                        } else if (room.gameId == 3) {
+                            window.location.href = `game3.html?room=${pin}&teams=${room.teamsCount}`;
                         }
                     }, 1000);
                 } else {
