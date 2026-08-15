@@ -129,6 +129,7 @@ body.flash-red {
     flex-direction: column;
     gap: 15px;
     min-width: 0;
+    min-height: 0;
 }
 
 .team-card {
@@ -274,7 +275,7 @@ body.flash-red {
     box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
     overflow: hidden;
     min-height: 200px;
-    flex-shrink: 0;
+    flex-shrink: 1;
 }
 
 /* Đổi thành thanh tiêu đề cute như cửa sổ máy tính hoạt hình */

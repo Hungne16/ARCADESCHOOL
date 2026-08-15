@@ -127,7 +127,7 @@ function renderStage() {
 
     const stage = stages[currentStage];
     
-    let imgHtml = stage.image ? `<img src="${stage.image}" class="puzzle-img" style="max-width: 100%; max-height: 300px; margin: 10px auto; display: block; border: 4px solid #fff; border-radius: 8px;">` : '';
+    let imgHtml = stage.image ? `<img src="${stage.image}" class="puzzle-img" style="max-width: 100%; max-height: 35vh; margin: 10px auto; display: block; border: 4px solid #fff; border-radius: 8px;">` : '';
 
     // Hiển thị giao diện dành cho máy chiếu
     puzzleContainer.innerHTML = `
