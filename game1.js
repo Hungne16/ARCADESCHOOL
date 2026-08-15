@@ -127,16 +127,22 @@ function renderStage() {
 
     const stage = stages[currentStage];
     
-    let imgHtml = stage.image ? `<img src="${stage.image}" class="puzzle-img" style="width: 100%; margin: 10px auto; display: block; border: 4px solid #fff; border-radius: 8px;">` : '';
+    let imgHtml = stage.image ? `<img src="${stage.image}" style="max-height: 100%; max-width: 100%; object-fit: contain; border: 4px solid #fff; border-radius: 8px; box-shadow: 4px 4px 0px rgba(0,0,0,0.1);">` : '';
 
     // Hiển thị giao diện dành cho máy chiếu
     puzzleContainer.innerHTML = `
-        <h2 class="station-title">${stage.title}</h2>
-        ${imgHtml}
-        <p class="puzzle-desc">${stage.desc}</p>
-        
-        <div style="font-size: 2rem; text-align: center; margin-top: 15px; color: #ffca28;" id="projector-status">
-            Đang đợi Giáo viên điều khiển...
+        <div style="display: flex; flex-direction: column; width: 100%; height: 100%; gap: 10px;">
+            ${stage.image ? `<div style="flex: 1; min-height: 0; display: flex; justify-content: center; align-items: center; overflow: hidden; padding-top: 5px;">${imgHtml}</div>` : ''}
+            
+            <div style="flex-shrink: 0; background-color: #f5f5f5; padding: 10px 15px; border-radius: 10px; border: 3px dashed #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 95%; margin: 0 auto;">
+                <div style="display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
+                    <h2 style="margin: 0; font-size: 2rem; color: #ff5252; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); font-weight: bold;">${stage.title}:</h2>
+                    <span style="font-size: 1.8rem; color: #222; margin: 0; line-height: 1.3;">${stage.desc}</span>
+                </div>
+                <div style="font-size: 1.5rem; text-align: center; color: #ffca28; background: #222; padding: 2px 15px; border-radius: 6px; border: 2px solid #000;" id="projector-status">
+                    Đang đợi Giáo viên điều khiển...
+                </div>
+            </div>
         </div>
     `;
     
