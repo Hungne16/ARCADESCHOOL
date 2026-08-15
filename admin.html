@@ -26,73 +26,148 @@
         .hidden { display: none !important; }
         .controls { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-bottom: 20px; }
         .controls button { margin: 0; }
-        h1 { font-size: 4rem; color: #ffca28; }
+        h1 { font-size: 4rem; color: #ffca28; margin-bottom: 10px;}
         h2 { font-size: 3rem; margin-bottom: 20px;}
         .selected-team { border-color: #00ffcc; box-shadow: 0 0 15px #00ffcc; }
+        
+        /* CSS cho Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 800px; }
+        .tab-btn { flex: 1; font-size: 2.5rem; background: #333; color: #aaa; border: 4px solid #555; }
+        .tab-btn.active { background: #00ffcc; color: #000; border-color: #000; box-shadow: 4px 4px 0 #000; }
+        .tab-content { width: 100%; max-width: 800px; }
+        
+        /* CSS cho Question Editor */
+        .q-list { text-align: left; background: #222; padding: 15px; border-radius: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 2px solid #555;}
+        .q-item { background: #333; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 2px solid #444;}
+        .q-item-header { display: flex; justify-content: space-between; align-items: center; }
+        .q-item-title { font-size: 2rem; color: #ffca28; }
+        .q-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px;}
+        .q-opt { font-size: 1.5rem; background: #111; padding: 5px; border-radius: 3px; }
+        .q-correct { border: 2px solid #00e676; color: #00e676;}
+        
+        .editor-form { background: #333; padding: 20px; border-radius: 8px; border: 4px solid #ffca28; margin-top: 20px; text-align: left;}
+        .editor-form label { font-size: 2rem; color: #ccc; }
+        .editor-form input { font-size: 2rem; padding: 8px; margin-bottom: 15px;}
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
     <h1>TRUNG TÂM ĐIỀU KHIỂN</h1>
-    <div id="create-view" class="admin-box">
-        <h2>TẠO PHÒNG MỚI</h2>
-        <select id="game-select">
-            <option value="1">Game 1: Mật Mã Học Đường</option>
-            <option value="2">Game 2: Đấu Trường Sinh Tồn</option>
-        </select>
-        <select id="teams-select">
-            <option value="2">2 Đội (Chia nửa lớp)</option>
-            <option value="3">3 Đội</option>
-            <option value="4" selected>4 Đội (Khuyên dùng)</option>
-            <option value="5">5 Đội</option>
-            <option value="6">6 Đội</option>
-        </select>
-        <button onclick="createRoom()">TẠO PHÒNG</button>
-        <br><br>
-        <a href="index.html" style="color: #888; font-size: 2rem;">← Quay lại trang chủ</a>
+    
+    <div class="tabs">
+        <button class="tab-btn active" id="btn-tab-room" onclick="switchTab('room')">QUẢN LÝ PHÒNG</button>
+        <button class="tab-btn" id="btn-tab-qbank" onclick="switchTab('qbank')">NGÂN HÀNG CÂU HỎI</button>
     </div>
 
-    <div id="control-view" class="admin-box hidden">
-        <h2>MÃ PHÒNG: <span id="pin-display" style="color:#ffca28; font-size: 5rem; display: block;"></span></h2>
-        <p style="font-size: 2rem; color: #ccc;">Yêu cầu học sinh nhập mã này trên máy chiếu để kết nối.</p>
-        <p id="player-status" style="color: #ff5252; font-size: 2.5rem; margin: 15px 0;">[ Đang đợi máy chiếu kết nối... ]</p>
-        
-        <hr style="margin: 20px 0; border: 1px dashed #555;">
-        <button onclick="window.location.href='index.html'" style="background: #e53935; color: #fff; border-color: #b71c1c;">THOÁT PHÒNG</button>
-        
-        <!-- Controls for Game 1 -->
-        <div id="g1-controls" class="hidden">
-            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 1 (MẬT MÃ)</h3>
-            <p style="font-size: 2rem;">1. Bấm chọn Đội đang giơ tay:</p>
-            <div class="controls" id="g1-team-btns"></div>
-            <p style="font-size: 2rem;">2. Chọn đáp án mà đội đó chọn:</p>
-            <div class="controls">
-                <button onclick="sendG1Ans('A')" style="background: #e21b3c; color: #fff;">A</button>
-                <button onclick="sendG1Ans('B')" style="background: #1368ce; color: #fff;">B</button>
-                <button onclick="sendG1Ans('C')" style="background: #d89e00; color: #fff;">C</button>
-                <button onclick="sendG1Ans('D')" style="background: #26890c; color: #fff;">D</button>
-                <button onclick="sendG1Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
-                <button onclick="sendG1Ans('F')" style="background: #e84118; color: #fff;">F</button>
-            </div>
-            <button onclick="sendG1Next()" style="background: #ccc; margin-top: 10px;">QUA TRẠM KẾ TIẾP</button>
+    <div id="tab-room" class="tab-content">
+        <div id="create-view" class="admin-box">
+            <h2>TẠO PHÒNG MỚI</h2>
+            <select id="game-select">
+                <option value="1">Game 1: Mật Mã Học Đường</option>
+                <option value="2">Game 2: Đấu Trường Sinh Tồn</option>
+            </select>
+            <select id="teams-select">
+                <option value="2">2 Đội (Chia nửa lớp)</option>
+                <option value="3">3 Đội</option>
+                <option value="4" selected>4 Đội (Khuyên dùng)</option>
+                <option value="5">5 Đội</option>
+                <option value="6">6 Đội</option>
+            </select>
+            <button onclick="createRoom()">TẠO PHÒNG</button>
+            <br><br>
+            <a href="index.html" style="color: #888; font-size: 2rem;">← Quay lại trang chủ</a>
         </div>
 
-        <!-- Controls for Game 2 -->
-        <div id="g2-controls" class="hidden">
-            <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 2 (SINH TỒN)</h3>
-            <p style="font-size: 2rem;">1. Bấm chọn Đội:</p>
-            <div class="controls" id="g2-team-btns"></div>
-            <p style="font-size: 2rem;">2. Chốt đáp án cho đội đó:</p>
-            <div class="controls">
-                <button onclick="sendG2Ans('A')" style="background: #e21b3c; color: #fff;">A</button>
-                <button onclick="sendG2Ans('B')" style="background: #1368ce; color: #fff;">B</button>
-                <button onclick="sendG2Ans('C')" style="background: #d89e00; color: #fff;">C</button>
-                <button onclick="sendG2Ans('D')" style="background: #26890c; color: #fff;">D</button>
-                <button onclick="sendG2Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
-                <button onclick="sendG2Ans('F')" style="background: #e84118; color: #fff;">F</button>
+        <div id="control-view" class="admin-box hidden">
+            <h2>MÃ PHÒNG: <span id="pin-display" style="color:#ffca28; font-size: 5rem; display: block;"></span></h2>
+            <p style="font-size: 2rem; color: #ccc;">Yêu cầu học sinh nhập mã này trên máy chiếu để kết nối.</p>
+            <p id="player-status" style="color: #ff5252; font-size: 2.5rem; margin: 15px 0;">[ Đang đợi máy chiếu kết nối... ]</p>
+            
+            <hr style="margin: 20px 0; border: 1px dashed #555;">
+            <button onclick="window.location.href='index.html'" style="background: #e53935; color: #fff; border-color: #b71c1c;">THOÁT PHÒNG</button>
+            
+            <!-- Controls for Game 1 -->
+            <div id="g1-controls" class="hidden">
+                <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 1 (MẬT MÃ)</h3>
+                <p style="font-size: 2rem;">1. Bấm chọn Đội đang giơ tay:</p>
+                <div class="controls" id="g1-team-btns"></div>
+                <p style="font-size: 2rem;">2. Chọn đáp án mà đội đó chọn:</p>
+                <div class="controls">
+                    <button onclick="sendG1Ans('A')" style="background: #e21b3c; color: #fff;">A</button>
+                    <button onclick="sendG1Ans('B')" style="background: #1368ce; color: #fff;">B</button>
+                    <button onclick="sendG1Ans('C')" style="background: #d89e00; color: #fff;">C</button>
+                    <button onclick="sendG1Ans('D')" style="background: #26890c; color: #fff;">D</button>
+                    <button onclick="sendG1Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
+                    <button onclick="sendG1Ans('F')" style="background: #e84118; color: #fff;">F</button>
+                </div>
+                <button onclick="sendG1Next()" style="background: #ccc; margin-top: 10px;">QUA TRẠM KẾ TIẾP</button>
             </div>
-            <hr style="border: 1px dashed #555; margin: 20px 0;">
-            <button onclick="sendG2Reveal()" style="background: #ffca28;">CÔNG BỐ KẾT QUẢ 🚀</button>
-            <button onclick="sendG2Next()" style="background: #00ffcc; margin-top: 10px;">CÂU TIẾP THEO</button>
+
+            <!-- Controls for Game 2 -->
+            <div id="g2-controls" class="hidden">
+                <h3 style="font-size: 2.5rem; color: #29b6f6; margin-bottom: 10px;">ĐIỀU KHIỂN GAME 2 (SINH TỒN)</h3>
+                <p style="font-size: 2rem;">1. Bấm chọn Đội:</p>
+                <div class="controls" id="g2-team-btns"></div>
+                <p style="font-size: 2rem;">2. Chốt đáp án cho đội đó:</p>
+                <div class="controls">
+                    <button onclick="sendG2Ans('A')" style="background: #e21b3c; color: #fff;">A</button>
+                    <button onclick="sendG2Ans('B')" style="background: #1368ce; color: #fff;">B</button>
+                    <button onclick="sendG2Ans('C')" style="background: #d89e00; color: #fff;">C</button>
+                    <button onclick="sendG2Ans('D')" style="background: #26890c; color: #fff;">D</button>
+                    <button onclick="sendG2Ans('E')" style="background: #8e44ad; color: #fff;">E</button>
+                    <button onclick="sendG2Ans('F')" style="background: #e84118; color: #fff;">F</button>
+                </div>
+                <hr style="border: 1px dashed #555; margin: 20px 0;">
+                <button onclick="sendG2Reveal()" style="background: #ffca28;">CÔNG BỐ KẾT QUẢ 🚀</button>
+                <button onclick="sendG2Next()" style="background: #00ffcc; margin-top: 10px;">CÂU TIẾP THEO</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-qbank" class="tab-content hidden">
+        <div class="admin-box" style="max-width: 800px;">
+            <h2>KHO CÂU HỎI</h2>
+            <select id="qbank-game-select" onchange="loadQuestions()">
+                <option value="game1">Bộ câu hỏi: Game 1 (Mật Mã Học Đường)</option>
+                <option value="game2">Bộ câu hỏi: Game 2 (Đấu Trường Sinh Tồn)</option>
+            </select>
+            
+            <button onclick="showEditor()" style="background: #29b6f6; margin-bottom: 15px;">+ THÊM CÂU HỎI MỚI</button>
+            
+            <div id="q-list" class="q-list">
+                <!-- Danh sách câu hỏi render ở đây -->
+                <p style="font-size: 2rem; color: #888;">Đang tải dữ liệu...</p>
+            </div>
+
+            <!-- Form Soạn Thảo (Ẩn mặc định) -->
+            <div id="q-editor" class="editor-form hidden">
+                <h3 id="editor-title" style="font-size: 3rem; color: #00ffcc; margin-top:0;">THÊM CÂU HỎI</h3>
+                
+                <label>Nội dung câu hỏi:</label>
+                <input type="text" id="edit-q" placeholder="Nhập câu hỏi...">
+                
+                <div class="row-2">
+                    <div><label>Đáp án A:</label><input type="text" id="edit-opt-A"></div>
+                    <div><label>Đáp án B:</label><input type="text" id="edit-opt-B"></div>
+                    <div><label>Đáp án C:</label><input type="text" id="edit-opt-C"></div>
+                    <div><label>Đáp án D:</label><input type="text" id="edit-opt-D"></div>
+                    <div><label>Đáp án E (Tùy chọn):</label><input type="text" id="edit-opt-E"></div>
+                    <div><label>Đáp án F (Tùy chọn):</label><input type="text" id="edit-opt-F"></div>
+                </div>
+
+                <label>Đáp án ĐÚNG (A, B, C, D, E, F):</label>
+                <input type="text" id="edit-correct" placeholder="VD: A" style="text-transform: uppercase;">
+
+                <div id="frag-container">
+                    <label>Mảnh ghép thưởng (Chỉ dành cho Game 1):</label>
+                    <input type="text" id="edit-fragment" placeholder="VD: 4">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button onclick="saveQuestion()" style="background: #00e676;">💾 LƯU LẠI</button>
+                    <button onclick="hideEditor()" style="background: #e53935;">HỦY BỎ</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -102,13 +177,185 @@
     <script>
         let myPin = null;
 
+        let currentQuestionsCache = {}; // Cache câu hỏi khi fetch về
+        
+        function switchTab(tabId) {
+            document.getElementById('tab-room').classList.add('hidden');
+            document.getElementById('tab-qbank').classList.add('hidden');
+            document.getElementById('btn-tab-room').classList.remove('active');
+            document.getElementById('btn-tab-qbank').classList.remove('active');
+            
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`btn-tab-${tabId}`).classList.add('active');
+            
+            if (tabId === 'qbank') {
+                loadQuestions();
+            }
+        }
+
+        // ================= Q-BANK LOGIC =================
+
+        let currentEditingIndex = -1;
+        
+        // Cấp phát câu hỏi mặc định nếu DB trống
+        const defaultG1 = [
+            { fragment: "4", q: "Điền số tiếp theo vào dãy: 2, 6, 12, 20, 30, ...", opts: {A: "40", B: "42", C: "45", D: "50", E: "38", F: "36"}, correct: "B" },
+            { fragment: "2", q: "Thủ đô của nước Việt Nam là gì?", opts: {A: "TP.HCM", B: "Đà Nẵng", C: "Hà Nội", D: "Huế", E: "Cần Thơ", F: "Hải Phòng"}, correct: "C" },
+            { fragment: "5", q: "Con vật nào biểu tượng cho năm 2024?", opts: {A: "Mèo", B: "Rồng", C: "Rắn", D: "Hổ"}, correct: "B" }
+        ];
+        const defaultG2 = [
+            { q: "Chiến thắng Điện Biên Phủ diễn ra vào năm nào?", opts: { A: "1945", B: "1954", C: "1975", D: "1930" }, correct: "B" },
+            { q: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?", opts: { A: "Fansipan", B: "Bạch Mã", C: "Langbiang", D: "Ngọc Linh" }, correct: "A" }
+        ];
+
+        function loadQuestions() {
+            const gameType = document.getElementById('qbank-game-select').value;
+            const qList = document.getElementById('q-list');
+            qList.innerHTML = '<p style="font-size: 2rem; color: #888;">Đang tải dữ liệu...</p>';
+            
+            document.getElementById('frag-container').style.display = (gameType === 'game1') ? 'block' : 'none';
+            hideEditor();
+
+            db.ref(`questions/${gameType}`).once('value', snap => {
+                let questions = snap.val();
+                if (!questions) {
+                    // Nếu rỗng, seed data mặc định
+                    questions = (gameType === 'game1') ? defaultG1 : defaultG2;
+                    db.ref(`questions/${gameType}`).set(questions);
+                }
+                currentQuestionsCache[gameType] = questions;
+                renderQuestionList(questions);
+            });
+        }
+
+        function renderQuestionList(questions) {
+            const qList = document.getElementById('q-list');
+            if (!questions || questions.length === 0) {
+                qList.innerHTML = '<p style="font-size: 2rem; color: #ff5252;">Chưa có câu hỏi nào. Hãy thêm mới!</p>';
+                return;
+            }
+            
+            let html = '';
+            questions.forEach((q, idx) => {
+                let optsHtml = '';
+                ['A', 'B', 'C', 'D', 'E', 'F'].forEach(k => {
+                    if(q.opts[k]) {
+                        optsHtml += `<div class="q-opt ${q.correct === k ? 'q-correct' : ''}"><strong>${k}:</strong> ${q.opts[k]}</div>`;
+                    }
+                });
+                
+                let extra = q.fragment ? `<span style="background: #ffca28; color:#000; padding:2px 5px; border-radius:3px;">Mảnh: ${q.fragment}</span>` : '';
+                
+                html += `
+                    <div class="q-item">
+                        <div class="q-item-header">
+                            <span class="q-item-title">Câu ${idx + 1}: ${q.q} ${extra}</span>
+                            <div>
+                                <button onclick="editQuestion(${idx})" style="background: #ffb300; width: auto; padding: 5px 15px; font-size: 1.5rem; margin:0;">SỬA</button>
+                                <button onclick="deleteQuestion(${idx})" style="background: #e53935; width: auto; padding: 5px 15px; font-size: 1.5rem; margin:0;">XÓA</button>
+                            </div>
+                        </div>
+                        <div class="q-opts">${optsHtml}</div>
+                    </div>
+                `;
+            });
+            qList.innerHTML = html;
+        }
+
+        function showEditor() {
+            document.getElementById('q-editor').classList.remove('hidden');
+            document.getElementById('editor-title').innerText = "THÊM CÂU HỎI MỚI";
+            currentEditingIndex = -1; // New
+            
+            // Clear form
+            document.getElementById('edit-q').value = '';
+            document.getElementById('edit-opt-A').value = '';
+            document.getElementById('edit-opt-B').value = '';
+            document.getElementById('edit-opt-C').value = '';
+            document.getElementById('edit-opt-D').value = '';
+            document.getElementById('edit-opt-E').value = '';
+            document.getElementById('edit-opt-F').value = '';
+            document.getElementById('edit-correct').value = '';
+            document.getElementById('edit-fragment').value = '';
+        }
+
+        function hideEditor() {
+            document.getElementById('q-editor').classList.add('hidden');
+        }
+
+        function editQuestion(idx) {
+            const gameType = document.getElementById('qbank-game-select').value;
+            const q = currentQuestionsCache[gameType][idx];
+            
+            document.getElementById('q-editor').classList.remove('hidden');
+            document.getElementById('editor-title').innerText = `SỬA CÂU ${idx + 1}`;
+            currentEditingIndex = idx;
+            
+            document.getElementById('edit-q').value = q.q;
+            document.getElementById('edit-opt-A').value = q.opts.A || '';
+            document.getElementById('edit-opt-B').value = q.opts.B || '';
+            document.getElementById('edit-opt-C').value = q.opts.C || '';
+            document.getElementById('edit-opt-D').value = q.opts.D || '';
+            document.getElementById('edit-opt-E').value = q.opts.E || '';
+            document.getElementById('edit-opt-F').value = q.opts.F || '';
+            document.getElementById('edit-correct').value = q.correct || '';
+            document.getElementById('edit-fragment').value = q.fragment || '';
+            
+            document.getElementById('q-editor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function saveQuestion() {
+            const gameType = document.getElementById('qbank-game-select').value;
+            let questions = currentQuestionsCache[gameType] || [];
+            
+            const qTxt = document.getElementById('edit-q').value.trim();
+            const correctTxt = document.getElementById('edit-correct').value.trim().toUpperCase();
+            const fragTxt = document.getElementById('edit-fragment').value.trim();
+            
+            if(!qTxt || !correctTxt) return alert("Vui lòng điền đủ câu hỏi và đáp án đúng!");
+            
+            const newQ = {
+                q: qTxt,
+                correct: correctTxt,
+                opts: {}
+            };
+            
+            if(gameType === 'game1') newQ.fragment = fragTxt;
+            
+            ['A','B','C','D','E','F'].forEach(k => {
+                const val = document.getElementById(`edit-opt-${k}`).value.trim();
+                if(val) newQ.opts[k] = val;
+            });
+
+            if (currentEditingIndex === -1) {
+                questions.push(newQ); // Add new
+            } else {
+                questions[currentEditingIndex] = newQ; // Update
+            }
+            
+            db.ref(`questions/${gameType}`).set(questions).then(() => {
+                loadQuestions();
+            });
+        }
+        
+        function deleteQuestion(idx) {
+            if(!confirm("Bạn có chắc chắn muốn xóa câu này?")) return;
+            const gameType = document.getElementById('qbank-game-select').value;
+            let questions = currentQuestionsCache[gameType];
+            questions.splice(idx, 1);
+            db.ref(`questions/${gameType}`).set(questions).then(() => {
+                loadQuestions();
+            });
+        }
+
+        // ================= ROOM CREATION LOGIC =================
+
         function createRoom() {
             const gameId = document.getElementById('game-select').value;
             const teamsCount = document.getElementById('teams-select').value;
             
             myPin = Math.floor(1000 + Math.random() * 9000).toString();
             
-            // Hiển thị trạng thái đang xử lý để không bị lầm tưởng là đơ
             const btn = document.querySelector('button[onclick="createRoom()"]');
             const originalText = btn.innerText;
             btn.innerText = "ĐANG KẾT NỐI...";
@@ -116,20 +363,28 @@
 
             let isSuccess = false;
             
-            // Timeout 5 giây nếu Firebase treo
             setTimeout(() => {
                 if(!isSuccess) {
                     btn.innerText = originalText;
                     btn.disabled = false;
-                    alert("Kết nối Firebase bị treo (Timeout)! Nguyên nhân có thể do sai Database URL (Mặc định đang dùng Singapore). Anh vào Firebase -> Realtime Database -> Copy đường link trên cùng gửi cho em nhé!");
+                    alert("Kết nối Firebase bị treo (Timeout)!");
                 }
             }, 5000);
 
-            db.ref('rooms/' + myPin).set({
-                gameId: gameId,
-                teamsCount: teamsCount,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                playerJoined: false
+            // Fetch current questions from Q-Bank based on selected game
+            const gameType = (gameId === "1") ? "game1" : "game2";
+            
+            db.ref(`questions/${gameType}`).once('value').then(snap => {
+                let questionsData = snap.val() || ((gameType === "game1") ? defaultG1 : defaultG2);
+                
+                // Copy questions to Room
+                return db.ref('rooms/' + myPin).set({
+                    gameId: gameId,
+                    teamsCount: teamsCount,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    playerJoined: false,
+                    questions: questionsData // <-- SAO CHÉP KHO CÂU HỎI VÀO PHÒNG
+                });
             }).then(() => {
                 isSuccess = true;
                 btn.innerText = originalText;
@@ -138,6 +393,9 @@
                 document.getElementById('create-view').classList.add('hidden');
                 document.getElementById('control-view').classList.remove('hidden');
                 document.getElementById('pin-display').innerText = myPin;
+                
+                // Ẩn tab selector để tránh thoát khi đang đk game
+                document.querySelector('.tabs').style.display = 'none';
 
                 let btnsHTML = '';
                 for(let i=1; i<=teamsCount; i++) {
@@ -162,7 +420,7 @@
                     }
                 });
             }).catch((error) => {
-                alert("Lỗi tạo phòng (Firebase): " + error.message + "\n\nHãy kiểm tra xem anh đã tạo Realtime Database và chọn 'Start in test mode' chưa nhé!");
+                alert("Lỗi tạo phòng: " + error.message);
             });
         }
         

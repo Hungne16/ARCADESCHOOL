@@ -22,29 +22,7 @@ if(roomPin) {
     });
 }
 
-const stages = [
-    {
-        title: "Trạm 1: Bức Tường Số",
-        desc: "Hệ thống bị khóa. Hãy tìm quy luật của dãy số sau để mở cửa:<br><br><strong>2,  6,  12,  20,  30,  ?</strong>",
-        options: { a: "40", b: "42", c: "45", d: "48", e: "50", f: "55" },
-        correct: "b",
-        fragment: "4"
-    },
-    {
-        title: "Trạm 2: Cuốn Sách Cổ",
-        desc: "Dữ liệu lịch sử bị hỏng. Hãy điền từ còn thiếu:<br><br><em>'Tên gọi của thủ đô Hà Nội thời nhà Lý là gì?'</em>",
-        options: { a: "Hoa Lư", b: "Cổ Loa", c: "Thăng Long", d: "Đông Đô", e: "Phú Xuân", f: "Gia Định" },
-        correct: "c",
-        fragment: "2"
-    },
-    {
-        title: "Trạm 3: Mạch Điện Lõi",
-        desc: "Cảnh báo nhiệt độ! Để khởi động lại hệ thống, hãy cho biết:<br><br><strong>Nước chuyển từ thể lỏng sang thể khí ở bao nhiêu độ C?</strong><br>(Chỉ nhập số)",
-        options: { a: "50", b: "75", c: "90", d: "100", e: "120", f: "150" },
-        correct: "d",
-        fragment: "0"
-    }
-];
+let stages = []; // Dữ liệu sẽ được nạp từ Firebase
 
 let currentStage = 0;
 let timeRemaining = 600; // 10 minutes in seconds
@@ -312,4 +290,42 @@ function startTimer() {
     }, 1000);
 }
 
-window.onload = initGame;
+window.onload = () => {
+    if (roomPin) {
+        document.getElementById('puzzle-container').innerHTML = '<h2 style="color:#fff; text-align:center;">ĐANG TẢI DỮ LIỆU CÂU HỎI...</h2>';
+        db.ref(`rooms/${roomPin}/questions`).once('value').then(snap => {
+            const data = snap.val();
+            if (data && data.length > 0) {
+                stages = data.map((q, idx) => ({
+                    title: `Trạm ${idx + 1}`,
+                    desc: q.q,
+                    options: { 
+                        a: q.opts.A, b: q.opts.B, c: q.opts.C, 
+                        d: q.opts.D, e: q.opts.E, f: q.opts.F 
+                    },
+                    correct: q.correct.toLowerCase(),
+                    fragment: q.fragment || "?"
+                }));
+                
+                // Khôi phục HTML gốc của puzzle-container
+                document.getElementById('puzzle-container').innerHTML = `
+                    <h2 class="stage-title" id="stage-title">Trạm ?</h2>
+                    <p class="question-desc" id="question-desc">...</p>
+                    <div class="answers-grid" id="answers-grid">
+                        <div class="answer-card" id="ans-a"><span class="letter">A</span> <span class="text" id="text-a">...</span></div>
+                        <div class="answer-card" id="ans-b"><span class="letter">B</span> <span class="text" id="text-b">...</span></div>
+                        <div class="answer-card" id="ans-c"><span class="letter">C</span> <span class="text" id="text-c">...</span></div>
+                        <div class="answer-card" id="ans-d"><span class="letter">D</span> <span class="text" id="text-d">...</span></div>
+                        <div class="answer-card" id="ans-e"><span class="letter" style="background:#8e44ad;">E</span> <span class="text" id="text-e">...</span></div>
+                        <div class="answer-card" id="ans-f"><span class="letter" style="background:#e84118;">F</span> <span class="text" id="text-f">...</span></div>
+                    </div>
+                `;
+                initGame();
+            } else {
+                alert("Phòng này không có dữ liệu câu hỏi!");
+            }
+        });
+    } else {
+        alert("Vui lòng tham gia qua mã PIN (VD: ?room=1234)");
+    }
+};

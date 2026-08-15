@@ -1,16 +1,5 @@
 // Cấu hình trò chơi
-const questions = [
-    {
-        q: "Hệ thống bị khóa. Hãy tìm quy luật<br>của dãy số sau để mở cửa:<br><span class=\"text-red-600 text-6xl mt-4 inline-block\">2, 6, 12, 20, 30, ?</span>",
-        correct: "42",
-        type: "input"
-    },
-    {
-        q: "Chiến thắng Điện Biên Phủ diễn ra vào năm nào?",
-        correct: "1954",
-        type: "input"
-    }
-];
+let questions = []; // Dữ liệu sẽ được nạp từ Firebase
 
 let currentQuestion = 0;
 let teams = [];
@@ -352,4 +341,32 @@ if (roomPin && typeof db !== 'undefined') {
     });
 }
 
-window.onload = initGame;
+window.onload = () => {
+    if (roomPin) {
+        document.getElementById('question-text').innerHTML = '<h2 class="text-white text-center">ĐANG TẢI DỮ LIỆU CÂU HỎI...</h2>';
+        db.ref(`rooms/${roomPin}/questions`).once('value').then(snap => {
+            const data = snap.val();
+            if (data && data.length > 0) {
+                questions = data.map(q => {
+                    let optsHtml = '<div class="grid grid-cols-2 gap-4 mt-6 text-2xl text-left">';
+                    ['A','B','C','D','E','F'].forEach(k => {
+                        if (q.opts && q.opts[k]) {
+                            optsHtml += `<div class="bg-blue-100 p-2 rounded border-2 border-blue-400 text-black shadow"><strong>${k}.</strong> ${q.opts[k]}</div>`;
+                        }
+                    });
+                    optsHtml += '</div>';
+
+                    return {
+                        q: `<span class="text-3xl font-bold">${q.q}</span>` + optsHtml,
+                        correct: (q.correct || "").toLowerCase()
+                    };
+                });
+                initGame();
+            } else {
+                alert("Phòng này không có dữ liệu câu hỏi!");
+            }
+        });
+    } else {
+        alert("Vui lòng tham gia qua mã PIN (VD: ?room=1234)");
+    }
+};
