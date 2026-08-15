@@ -267,9 +267,13 @@ function gameOver() {
 function showVictory() {
     clearInterval(timerInterval);
     let mvp = [...teams].sort((a,b) => b.score - a.score)[0];
+    
+    // Tính toán mã bí mật từ các mảnh ghép
+    let secretCode = stages.map(s => s.fragment).join("");
+    
     modalTitle.innerText = "MỞ KHÓA THÀNH CÔNG!";
     modalTitle.style.color = "#ffd700";
-    modalText.innerHTML = `Mã số bí mật là: <strong>420</strong><br>Đội vô địch: <strong>${mvp.name}</strong> (${mvp.score} điểm)!`;
+    modalText.innerHTML = `Mã số bí mật là: <strong style="color:#00ffcc; font-size:3.5rem;">${secretCode}</strong><br>Đội vô địch: <strong>${mvp.name}</strong> (${mvp.score} điểm)!`;
     modal.classList.remove('hidden');
 }
 
