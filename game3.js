@@ -72,17 +72,27 @@ if(roomPin) {
         }
     });
 
-    db.ref('rooms/' + roomPin).once('value').then(snap => {
-        const roomData = snap.val();
-        if(roomData && roomData.host && roomData.setId) {
-            db.ref(`users/${roomData.host}/sets/${roomData.setId}/questions`).once('value').then(qSnap => {
-                stages = qSnap.val() || [];
-                if(stages.length === 0) {
-                    alert("Bộ câu hỏi trống!");
-                }
-                renderStage();
-                renderTracks();
-            });
+    db.ref(`rooms/${roomPin}/questions`).once('value').then(snap => {
+        const data = snap.val();
+        if (data && data.length > 0) {
+            stages = data.map((q, idx) => ({
+                title: `Câu ${idx + 1}`,
+                desc: q.q,
+                options: { 
+                    a: q.opts ? q.opts.A : "", 
+                    b: q.opts ? q.opts.B : "", 
+                    c: q.opts ? q.opts.C : "", 
+                    d: q.opts ? q.opts.D : "", 
+                    e: q.opts ? q.opts.E : "", 
+                    f: q.opts ? q.opts.F : "" 
+                },
+                correct: q.correct ? q.correct.toLowerCase() : "",
+                image: q.image
+            }));
+            renderStage();
+            renderTracks();
+        } else {
+            alert("Phòng này không có dữ liệu câu hỏi!");
         }
     });
 }
