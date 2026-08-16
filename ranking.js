@@ -9,14 +9,22 @@ if (!roomPin) {
 const db = firebase.database();
 let teamsData = [];
 
-// Khởi tạo pháo hoa
+// Khởi tạo pháo hoa (Thêm try-catch để phòng lỗi CDN mạng trường học chặn)
 var myCanvas = document.getElementById('confetti-canvas');
-var myConfetti = confetti.create(myCanvas, {
-    resize: true,
-    useWorker: true
-});
+var myConfetti = null;
+try {
+    if (typeof confetti !== 'undefined') {
+        myConfetti = confetti.create(myCanvas, {
+            resize: true,
+            useWorker: true
+        });
+    }
+} catch(e) {
+    console.log("Confetti failed to load", e);
+}
 
 function fireConfetti() {
+    if (!myConfetti) return;
     var duration = 15 * 1000;
     var animationEnd = Date.now() + duration;
     var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -49,13 +57,13 @@ function renderRanking() {
     podiumArea.innerHTML = '';
     otherList.innerHTML = '';
 
-    if (teamsData.length === 0) {
+    if (!teamsData || teamsData.length === 0) {
         podiumArea.innerHTML = '<h2 style="color:white; font-size:2rem;">Chưa có dữ liệu xếp hạng</h2>';
         return;
     }
 
-    // Sắp xếp giảm dần theo điểm
-    const sortedTeams = [...teamsData].sort((a, b) => b.score - a.score);
+    // Lọc các giá trị null/undefined do mảng Firebase và sắp xếp giảm dần theo điểm
+    const sortedTeams = teamsData.filter(t => t != null).sort((a, b) => b.score - a.score);
 
     // Top 3 (Podium)
     // Để hiển thị đúng thứ tự trực quan 2 - 1 - 3, ta lấy ra và render theo class
