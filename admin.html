@@ -558,7 +558,7 @@
 
         function loadSetsForRoom() {
             const gameId = document.getElementById('game-select').value;
-            const gameType = (gameId === "1") ? "game1" : "game2";
+            const gameType = (gameId === "1") ? "game1" : (gameId === "2") ? "game2" : "game3";
             const selectEl = document.getElementById('room-set-select');
             
             if(!currentUserId) return; 
