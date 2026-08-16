@@ -112,8 +112,13 @@ function updateScore(teamId, amount) {
         const trackEl = document.getElementById(`track-${teamId}`);
         if(trackEl) {
             trackEl.style.borderColor = amount > 0 ? '#00e676' : '#e53935';
+            trackEl.classList.add('moving');
             setTimeout(() => {
-                if(trackEl) trackEl.style.borderColor = '#666';
+                const currentTrackEl = document.getElementById(`track-${teamId}`);
+                if(currentTrackEl) {
+                    currentTrackEl.style.borderColor = '';
+                    currentTrackEl.classList.remove('moving');
+                }
             }, 500);
         }
 
@@ -142,7 +147,7 @@ function renderTracks() {
         <div class="track" id="track-${t.id}">
             <span class="team-name">${t.name}</span>
             <div class="progress-bar">
-                <div class="racer" id="racer-${t.id}" style="left: ${progressPercent}%; transform: translateX(-${progressPercent}%); display:flex; align-items:center; justify-content:center; font-size: 2.5rem; filter: drop-shadow(2px 2px 0px #000);">
+                <div class="racer" id="racer-${t.id}" style="left: ${progressPercent}%; transform: translateX(-${progressPercent}%);">
                     ${icon}
                 </div>
             </div>

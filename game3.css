@@ -654,46 +654,154 @@ body.flash-red {
     margin-top: 3px;
 }
 
- / *   G a m e   3   R a c i n g   s p e c i f i c   s t y l e s   * / 
- . t r a c k   { 
-         d i s p l a y :   f l e x ; 
-         a l i g n - i t e m s :   c e n t e r ; 
-         b a c k g r o u n d :   # 4 4 4 ; 
-         b o r d e r - r a d i u s :   8 p x ; 
-         p a d d i n g :   1 0 p x ; 
-         m a r g i n - b o t t o m :   5 p x ; 
-         p o s i t i o n :   r e l a t i v e ; 
-         b o r d e r :   2 p x   d a s h e d   # 6 6 6 ; 
- } 
- . t r a c k   . t e a m - n a m e   { 
-         f o n t - s i z e :   2 r e m ; 
-         c o l o r :   # f f c a 2 8 ; 
-         w i d t h :   8 0 p x ; 
-         f l e x - s h r i n k :   0 ; 
- } 
- . t r a c k   . p r o g r e s s - b a r   { 
-         f l e x - g r o w :   1 ; 
-         h e i g h t :   4 0 p x ; 
-         b a c k g r o u n d :   # 1 1 1 ; 
-         b o r d e r - r a d i u s :   2 0 p x ; 
-         m a r g i n :   0   1 5 p x ; 
-         p o s i t i o n :   r e l a t i v e ; 
-         b o r d e r :   2 p x   s o l i d   # 3 3 3 ; 
-         o v e r f l o w :   h i d d e n ; 
- } 
- . t r a c k   . r a c e r   { 
-         h e i g h t :   3 6 p x ; 
-         w i d t h :   3 6 p x ; 
-         p o s i t i o n :   a b s o l u t e ; 
-         t o p :   0 ; 
-         l e f t :   0 ; 
-         t r a n s i t i o n :   l e f t   0 . 5 s   e a s e - i n - o u t ; 
- } 
- . t r a c k   . s c o r e   { 
-         f o n t - s i z e :   2 . 5 r e m ; 
-         c o l o r :   # 0 0 f f c c ; 
-         w i d t h :   4 0 p x ; 
-         t e x t - a l i g n :   c e n t e r ; 
- } 
-  
- 
+/* ==========================================================================
+   GAME 3 RACING STYLES (Cyberpunk / Glassmorphism)
+   ========================================================================== */
+.side-column {
+    background: rgba(10, 15, 30, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+    border-radius: 15px 0 0 15px;
+}
+
+.tracks-container {
+    padding: 15px 5px !important;
+}
+
+.track {
+    background: linear-gradient(90deg, #1a1a2e, #16213e);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px 10px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, border-color 0.2s;
+    overflow: hidden;
+}
+
+/* Hiệu ứng kính mờ cho đường đua */
+.track::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+    pointer-events: none;
+}
+
+.track .team-name {
+    font-size: 2rem;
+    font-weight: 800;
+    width: 80px;
+    flex-shrink: 0;
+    text-shadow: 0 0 10px currentColor;
+    z-index: 2;
+}
+
+/* Mặt đường (Asphalt) */
+.track .progress-bar {
+    flex-grow: 1;
+    height: 40px;
+    background: #111;
+    border-radius: 8px;
+    margin: 0 15px;
+    position: relative;
+    border: 2px solid #333;
+    box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+    /* Vạch kẻ đứt giữa đường */
+    background-image: linear-gradient(to right, #555 50%, transparent 50%);
+    background-size: 40px 2px;
+    background-position: center;
+    background-repeat: repeat-x;
+}
+
+/* Vạch đích (Checkered Flag) */
+.track .progress-bar::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background-image: 
+        linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff),
+        linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+    background-position: 0 0, 10px 10px;
+    background-size: 20px 20px;
+    background-color: #000;
+    border-left: 2px solid #ffca28;
+    z-index: 1;
+}
+
+.track .racer {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bounce effect */
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+}
+
+/* Vệt sáng đuôi xe (Motion Trail) */
+.track .racer::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 4px;
+    background: linear-gradient(to left, currentColor, transparent);
+    opacity: 0.6;
+    border-radius: 2px;
+}
+
+.track .score {
+    font-size: 2.5rem;
+    color: #fff;
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00e676;
+    z-index: 2;
+}
+
+/* Các màu sắc đội đua (Neon Glow) */
+#track-1 .team-name { color: #ff5252; }
+#track-1 .racer { color: #ff5252; }
+
+#track-2 .team-name { color: #448aff; }
+#track-2 .racer { color: #448aff; }
+
+#track-3 .team-name { color: #00e676; }
+#track-3 .racer { color: #00e676; }
+
+#track-4 .team-name { color: #ffca28; }
+#track-4 .racer { color: #ffca28; }
+
+#track-5 .team-name { color: #e040fb; }
+#track-5 .racer { color: #e040fb; }
+
+#track-6 .team-name { color: #18ffff; }
+#track-6 .racer { color: #18ffff; }
+
+@keyframes wobble {
+    0% { transform: translateX(0) rotate(0); }
+    25% { transform: translateX(5px) rotate(5deg); }
+    50% { transform: translateX(0) rotate(0); }
+    75% { transform: translateX(5px) rotate(-5deg); }
+    100% { transform: translateX(0) rotate(0); }
+}
+
+.track.moving .racer {
+    animation: wobble 0.4s ease-in-out;
+}
