@@ -57,13 +57,21 @@ function renderRanking() {
     podiumArea.innerHTML = '';
     otherList.innerHTML = '';
 
-    if (!teamsData || teamsData.length === 0) {
+    if (!teamsData) {
+        podiumArea.innerHTML = '<h2 style="color:white; font-size:2rem;">Chưa có dữ liệu xếp hạng</h2>';
+        return;
+    }
+
+    // Đảm bảo teamsData luôn là một mảng (Firebase thường trả về object nếu mảng bị khuyết chỉ số)
+    const teamsArray = Array.isArray(teamsData) ? teamsData : Object.values(teamsData);
+
+    if (teamsArray.length === 0) {
         podiumArea.innerHTML = '<h2 style="color:white; font-size:2rem;">Chưa có dữ liệu xếp hạng</h2>';
         return;
     }
 
     // Lọc các giá trị null/undefined do mảng Firebase và sắp xếp giảm dần theo điểm
-    const sortedTeams = teamsData.filter(t => t != null).sort((a, b) => b.score - a.score);
+    const sortedTeams = teamsArray.filter(t => t != null).sort((a, b) => b.score - a.score);
 
     // Top 3 (Podium)
     // Để hiển thị đúng thứ tự trực quan 2 - 1 - 3, ta lấy ra và render theo class
