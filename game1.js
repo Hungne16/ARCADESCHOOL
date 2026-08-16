@@ -257,6 +257,14 @@ function nextStage() {
     renderStage();
 }
 
+function transitionToRanking() {
+    db.ref(`rooms/${roomPin}/rankings`).set(teams).then(() => {
+        setTimeout(() => {
+            window.location.href = 'ranking.html?room=' + roomPin;
+        }, 5000);
+    });
+}
+
 function gameOver() {
     clearInterval(timerInterval);
     timerDisplay.innerText = "00:00";
@@ -264,6 +272,7 @@ function gameOver() {
     modalTitle.style.color = "#ff5252";
     modalText.innerText = "Cả lớp đã hết Mạng hoặc Hết thời gian!\nHệ thống bị khóa vĩnh viễn.";
     modal.classList.remove('hidden');
+    transitionToRanking();
 }
 
 function showVictory() {
@@ -277,6 +286,7 @@ function showVictory() {
     modalTitle.style.color = "#ffd700";
     modalText.innerHTML = `Mã số bí mật là: <strong style="color:#00ffcc; font-size:3.5rem;">${secretCode}</strong><br>Đội vô địch: <strong>${mvp.name}</strong> (${mvp.score} điểm)!`;
     modal.classList.remove('hidden');
+    transitionToRanking();
 }
 
 function startTimer() {

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Xếp Hạng - ARCADE SCHOOL</title>
+    <!-- Google Fonts: VT323 cho text, Press Start 2P cho tiêu đề -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="ranking.css">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <!-- Nút trở về (Chỉ dùng khi cần test/chuyển nhanh) -->
+    <button id="btn-home" class="btn-home" onclick="window.location.href='index.html'">Về Sảnh</button>
+
+    <div class="ranking-container">
+        <h1 class="glow-title">BẢNG XẾP HẠNG</h1>
+
+        <!-- Khu vực Podium (Top 3) -->
+        <div class="podium-area" id="podium-area">
+            <!-- Render bằng JS -->
+        </div>
+
+        <!-- Khu vực danh sách các đội còn lại -->
+        <div class="other-teams-list" id="other-teams-list">
+            <!-- Render bằng JS -->
+        </div>
+    </div>
+
+    <!-- Pháo hoa/Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- App Logic -->
+    <script src="ranking.js"></script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+:root {
+    --bg-dark: #0a0f1e;
+    --gold: #ffd700;
+    --silver: #c0c0c0;
+    --bronze: #cd7f32;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #fff;
+    font-family: 'VT323', monospace;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hiệu ứng nền vũ trụ mờ */
+.stars, .twinkling {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+}
+.stars {
+    background: #000 url('https://raw.githubusercontent.com/danielstuart14/CSS_Fills/master/star-bg.png') repeat top center;
+    z-index: -2;
+}
+.twinkling {
+    background: transparent url('https://raw.githubusercontent.com/danielstuart14/CSS_Fills/master/twinkling.png') repeat top center;
+    z-index: -1;
+    animation: move-twink-back 200s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes move-twink-back {
+    from {background-position: 0 0;}
+    to {background-position: -10000px 5000px;}
+}
+
+.btn-home {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-family: 'VT323', monospace;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s;
+}
+.btn-home:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+}
+
+.ranking-container {
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90vw;
+    max-width: 1200px;
+    height: 90vh;
+}
+
+.glow-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 3.5rem;
+    color: #fff;
+    text-shadow: 0 0 10px #00e676, 0 0 20px #00e676, 0 0 40px #00e676;
+    margin-bottom: 50px;
+    text-align: center;
+    animation: pulsate 1.5s infinite alternate;
+}
+
+@keyframes pulsate {
+    100% {
+        text-shadow: 0 0 4px #00e676, 0 0 11px #00e676, 0 0 19px #00e676, 0 0 40px #00e676;
+    }
+    0% {
+        text-shadow: 0 0 2px #00e676, 0 0 4px #00e676, 0 0 6px #00e676, 0 0 10px #00e676;
+    }
+}
+
+/* PODIUM (Bục vinh quang) */
+.podium-area {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 20px;
+    height: 350px;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.podium-spot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 180px;
+    position: relative;
+}
+
+.podium-spot.rank-1 { order: 2; z-index: 3; }
+.podium-spot.rank-2 { order: 1; z-index: 2; }
+.podium-spot.rank-3 { order: 3; z-index: 1; }
+
+/* Hình ảnh / Avatar đội (dùng css shape hoặc icon) */
+.team-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-bottom: -15px; /* Kéo xuống đè lên bục một chút */
+    z-index: 5;
+    background: #222;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    border: 3px solid;
+    animation: bounce 2s infinite;
+}
+
+.rank-1 .team-avatar { border-color: var(--gold); box-shadow: 0 0 30px var(--gold); background: linear-gradient(135deg, #fff, var(--gold)); color: #000; animation-delay: 0s; }
+.rank-2 .team-avatar { border-color: var(--silver); box-shadow: 0 0 20px var(--silver); background: linear-gradient(135deg, #fff, var(--silver)); color: #000; animation-delay: 0.2s;}
+.rank-3 .team-avatar { border-color: var(--bronze); box-shadow: 0 0 15px var(--bronze); background: linear-gradient(135deg, #fff, var(--bronze)); color: #000; animation-delay: 0.4s;}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.podium-box {
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ánh sáng hắt từ dưới lên */
+.podium-box::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 50%;
+    background: linear-gradient(to top, rgba(255,255,255,0.2), transparent);
+}
+
+.rank-1 .podium-box { height: 250px; border-top: 3px solid var(--gold); background: linear-gradient(to bottom, rgba(255,215,0,0.2), transparent);}
+.rank-2 .podium-box { height: 180px; border-top: 3px solid var(--silver); background: linear-gradient(to bottom, rgba(192,192,192,0.2), transparent);}
+.rank-3 .podium-box { height: 130px; border-top: 3px solid var(--bronze); background: linear-gradient(to bottom, rgba(205,127,50,0.2), transparent);}
+
+.podium-rank-num {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+.rank-1 .podium-rank-num { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
+.rank-2 .podium-rank-num { color: var(--silver); text-shadow: 0 0 10px var(--silver); }
+.rank-3 .podium-rank-num { color: var(--bronze); text-shadow: 0 0 10px var(--bronze); }
+
+.podium-team-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.podium-team-score {
+    font-size: 2rem;
+    color: #00ffcc;
+    font-weight: bold;
+}
+
+/* DANH SÁCH CÁC ĐỘI CÒN LẠI */
+.other-teams-list {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.list-item {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px;
+    font-size: 2rem;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.list-item:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.list-rank {
+    width: 50px;
+    font-weight: bold;
+    color: #aaa;
+}
+.list-name {
+    flex-grow: 1;
+    font-weight: bold;
+}
+.list-score {
+    color: #00ffcc;
+    font-weight: bold;
+}
+
+/* Canvas Confetti */
+#confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}

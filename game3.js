@@ -97,6 +97,14 @@ if(roomPin) {
     });
 }
 
+function transitionToRanking() {
+    db.ref(`rooms/${roomPin}/rankings`).set(teams).then(() => {
+        setTimeout(() => {
+            window.location.href = 'ranking.html?room=' + roomPin;
+        }, 5000);
+    });
+}
+
 function updateScore(teamId, amount) {
     const t = teams.find(x => x.id === teamId);
     if(t) {
@@ -128,6 +136,7 @@ function updateScore(teamId, amount) {
             modalTitle.style.color = "#00e676";
             modalText.innerText = `Chúc mừng ${t.name} đã về đích đầu tiên!`;
             modal.classList.remove('hidden');
+            transitionToRanking();
         }
     }
 }

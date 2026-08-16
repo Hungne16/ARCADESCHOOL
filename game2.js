@@ -275,6 +275,14 @@ function nextQuestion() {
     loadQuestion();
 }
 
+function transitionToRanking() {
+    db.ref(`rooms/${roomPin}/rankings`).set(teams).then(() => {
+        setTimeout(() => {
+            window.location.href = 'ranking.html?room=' + roomPin;
+        }, 5000);
+    });
+}
+
 function gameOver() {
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
@@ -284,6 +292,7 @@ function gameOver() {
     modalText.innerText = "Tất cả các đội đã Tử Trận!\nKhông ai sống sót qua Đấu Trường Sinh Tồn.";
     
     modal.classList.remove('hidden');
+    transitionToRanking();
 }
 
 function showVictory() {
@@ -298,6 +307,7 @@ function showVictory() {
     modalText.innerHTML = `Chúc mừng các đội sống sót!<br>🥇 MVP: <strong>${mvp.name}</strong> (${mvp.score} điểm)!`;
     
     modal.classList.remove('hidden');
+    transitionToRanking();
 }
 
 // SOCKET LISTENERS (Bảo lưu logic Firebase cũ nếu dùng Multiplayer)
