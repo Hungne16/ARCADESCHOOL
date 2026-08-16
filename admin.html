@@ -668,6 +668,34 @@
             });
         }
         
+        function exitRoom() {
+            if (confirm("Bạn có chắc chắn muốn thoát phòng? Hành động này sẽ đóng phòng và ngắt kết nối máy chiếu.")) {
+                if (myPin) {
+                    // Xóa phòng trên Firebase
+                    db.ref('rooms/' + myPin).remove();
+                    myPin = null;
+                }
+                
+                // Trở về giao diện tạo phòng
+                document.getElementById('control-view').classList.add('hidden');
+                document.getElementById('create-view').classList.remove('hidden');
+                
+                // Hiện lại menu tabs
+                document.querySelector('.tabs').style.display = 'flex';
+                
+                // Ẩn tất cả bảng điều khiển game
+                document.getElementById('g1-controls').classList.add('hidden');
+                document.getElementById('g2-controls').classList.add('hidden');
+                document.getElementById('g3-controls').classList.add('hidden');
+                
+                // Reset text trạng thái
+                const st = document.getElementById('player-status');
+                st.innerText = "[ Đang đợi máy chiếu kết nối... ]";
+                st.style.color = "#ff5252";
+                st.classList.add('blink');
+            }
+        }
+
         function sendAction(actionName, payloadData) {
             if(!myPin) return;
             db.ref('rooms/' + myPin + '/actions').push({
