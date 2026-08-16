@@ -747,6 +747,14 @@
         function sendG2Next() {
             sendAction('next_question', null);
         }
+
+        function sendG3Score(teamId, amount) {
+            sendAction('g3_score', { teamId: teamId, amount: amount });
+        }
+
+        function sendG3Next() {
+            sendAction('g3_next', null);
+        }
     </script>
 </body>
 </html>
