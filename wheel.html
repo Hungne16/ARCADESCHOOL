@@ -22,6 +22,8 @@
     </script>
     <!-- Confetti JS -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- SheetJS (Excel) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="wheel.css">
 </head>
 <body class="bg-gray-900 text-white min-h-screen overflow-x-hidden relative font-vt323">
@@ -60,7 +62,13 @@
 
                 <!-- Ô nhập liệu -->
                 <div class="mb-4">
-                    <label id="input-label" class="block text-2xl text-cyan-400 mb-2">Nhập danh sách học sinh (mỗi dòng 1 tên):</label>
+                    <div class="flex justify-between items-end mb-2">
+                        <label id="input-label" class="block text-2xl text-cyan-400">Nhập danh sách học sinh (mỗi dòng 1 tên):</label>
+                        <label class="bg-green-600 hover:bg-green-500 text-white text-xl px-3 py-1 rounded cursor-pointer border-b-2 border-green-800 active:border-b-0 active:mt-0.5 transition-all whitespace-nowrap ml-2">
+                            📁 Excel
+                            <input type="file" id="excel-file" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelUpload(event)">
+                        </label>
+                    </div>
                     <textarea id="item-input" rows="8" class="w-full bg-gray-900 border-2 border-cyan-500 rounded p-4 text-2xl font-sans focus:outline-none focus:border-pink-500 text-green-400" placeholder="Nguyễn Văn A&#10;Trần Thị B..."></textarea>
                 </div>
 

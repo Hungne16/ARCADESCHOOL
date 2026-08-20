@@ -233,5 +233,83 @@ function removeWinner() {
     closeModal();
 }
 
+// Hàm đọc file Excel
+function handleExcelUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Hiển thị thông báo đang đọc (nếu file lớn)
+    const label = document.getElementById('input-label');
+    const oldText = label.innerText;
+    label.innerText = "Đang xử lý file Excel...";
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // Chuyển thành mảng 2 chiều
+            const json = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            
+            let extracted = [];
+            
+            json.forEach(row => {
+                if(!row || row.length === 0) return;
+                
+                let text = "";
+                // Logic thông minh: nếu cột đầu là số thứ tự, ưu tiên lấy cột 2 (index 1)
+                if(row.length > 1 && (typeof row[0] === 'number' || !isNaN(row[0])) && typeof row[1] === 'string') {
+                    text = row[1];
+                } else {
+                    // Tìm ô văn bản đầu tiên có vẻ là tên hoặc câu hỏi (độ dài > 1)
+                    let cell = row.find(c => typeof c === 'string' && c.trim().length > 1);
+                    if(cell) text = cell;
+                }
+                
+                if(text) {
+                    const t = text.trim();
+                    // Bỏ qua các dòng tiêu đề thường gặp
+                    const tLower = t.toLowerCase();
+                    if(!tLower.includes('họ tên') && !tLower.includes('họ và tên') && tLower !== 'stt' && tLower !== 'câu hỏi') {
+                        extracted.push(t);
+                    }
+                }
+            });
+            
+            if(extracted.length > 0) {
+                const textarea = document.getElementById('item-input');
+                if(textarea.value.trim() !== '') {
+                    if(confirm(`Đã tìm thấy ${extracted.length} dòng. Nhấn OK để chèn thêm vào cuối, nhấn Cancel để GHI ĐÈ danh sách cũ.`)) {
+                        textarea.value += '\n' + extracted.join('\n');
+                    } else {
+                        textarea.value = extracted.join('\n');
+                    }
+                } else {
+                    textarea.value = extracted.join('\n');
+                }
+                
+                // Loại bỏ dòng trống
+                textarea.value = textarea.value.split('\n').filter(x => x.trim().length > 0).join('\n');
+                updateWheel();
+                
+                playSound('tick'); // Phát âm báo thành công
+            } else {
+                alert("Không tìm thấy dữ liệu chữ hợp lệ trong file Excel này.");
+            }
+        } catch(error) {
+            console.error(error);
+            alert("Đã xảy ra lỗi khi đọc file Excel! Đảm bảo file không bị hỏng.");
+        }
+        
+        label.innerText = oldText;
+        event.target.value = ''; // Reset input
+    };
+    reader.readAsArrayBuffer(file);
+}
+
 // Khởi chạy
 init();
